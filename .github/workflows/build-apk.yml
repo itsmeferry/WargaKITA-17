@@ -21,7 +21,7 @@ jobs:
           gradle-version: '8.9'
       - name: Build Debug APK
         working-directory: extracted_repo/android
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon -Pandroid.useAndroidX=true
       - uses: actions/upload-artifact@v4
         with:
           name: WargaKITA-debug-apk
