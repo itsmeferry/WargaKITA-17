@@ -4,7 +4,16 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat dalam file ini.
 
 ---
 
-## [v1.12.0] - 2026-11-19 (Latest)
+## [v1.13.0] - 2026-11-19 (Latest)
+
+### Ditambahkan
+- **Filter & Pencarian Lanjutan Cash RT:** Pencarian teks (transaksi, kategori, petugas, metode), filter status (`Pending`, `Approved`, `Rejected`), filter tipe (`Pemasukan`, `Pengeluaran`), serta filter nama petugas di **Riwayat Transaksi Detail**.
+- **Rekap Kas Tahunan (12 Bulan):** Kartu ringkasan akumulasi pemasukan, pengeluaran, dan selisih bersih Januari–Desember per tahun pada tab **Lainnya**.
+- **Signing Keystore Permanen (GitHub Actions):** Dukungan `assembleRelease` dengan *signing keystore* tetap via GitHub Secrets agar pembaruan APK ke depan bisa langsung menimpa versi sebelumnya tanpa *uninstall*.
+
+---
+
+## [v1.12.0] - 2026-11-19
 
 ### Ditambahkan
 - **Supabase Storage untuk Bukti Transaksi (`receipts`):** Foto bukti pembayaran iuran dan nota kas kini otomatis diunggah ke Supabase Storage dengan struktur folder `TAHUN/BULAN/PEMASUKKAN` atau `PENGELUARAN` serta penamaan file terstandar (`Pemasukkan_Tanggal_NamaWarga` / `Lainnya_Nominal_NamaPemasukkan` / `Pengeluaran_Nominal_NamaPengeluaran`), sehingga dapat dilihat lintas perangkat oleh seluruh pengurus.
