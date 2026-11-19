@@ -1,6 +1,6 @@
 # WargaKITA — Aplikasi Administrasi & Keuangan RT 17 / RW 03 Kebonagung
 
-**WargaKITA** (`v1.13.1`) adalah aplikasi Android & Web bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, dan Storage).
+**WargaKITA** (`v1.13.2`) adalah aplikasi Android & Web bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, dan Storage).
 
 ---
 
@@ -16,7 +16,7 @@
 
 ---
 
-## Fitur & Fungsi Utama (v1.13.1)
+## Fitur & Fungsi Utama (v1.13.2)
 
 ### 1. Dashboard, Kalender Kegiatan & Ulang Tahun Warga RT 17
 - **Ringkasan Keuangan & Kependudukan:** Menampilkan total KK aktif, total warga aktif, saldo kas RT terkini, dan total tunggakan bulan berjalan.

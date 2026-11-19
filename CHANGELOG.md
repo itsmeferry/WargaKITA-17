@@ -4,7 +4,19 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat dalam file ini.
 
 ---
 
-## [v1.13.1] - 2026-11-19 (Latest)
+## [v1.13.2] - 2026-11-19 (Latest)
+
+### Diperbarui
+- **Desain Ikon Vektor Flat UI Penuh:** Mengganti seluruh emoji pada antarmuka aplikasi dengan ikon vektor Flat UI garis tipis yang seragam dan menyelaraskan palet warna per bagian (Dashboard, Data Warga, Data KK, Cash RT, dan Lainnya) untuk mode terang maupun gelap.
+- **Ikon Aplikasi Presisi & Full-Bleed:** Memusatkan ikon resmi **WargaKITA** secara presisi pada latar Flat UI `#eff6ff` untuk seluruh resolusi launcher Android (`mdpi`–`xxxhdpi`) maupun banner di dalam aplikasi.
+
+### Diperbaiki
+- **Kalender & Hilangkan Garis Scrollbar:** Memperbaiki tampilan ikon pada **Agenda Resmi RT** serta menyembunyikan garis *scrollbar* di sisi kanan seluruh halaman agar tampilan lebih bersih.
+- **Jarak Aman Status Bar HP:** Menambahkan *padding* otomatis `WindowInsets` / `status_bar_height` di `MainActivity.kt` agar header aplikasi tidak menumpuk dengan jam dan ikon notifikasi Android.
+
+---
+
+## [v1.13.1] - 2026-11-19
 
 ### Ditambahkan
 - **Kalender Ulang Tahun Warga Permanen:** Menampilkan tanggal ulang tahun warga berstatus `Permanen` pada kalender (titik oranye) serta daftar khusus yang terpisah dari **Agenda Resmi RT**.
