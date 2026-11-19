@@ -101,3 +101,8 @@ Setiap foto bukti pembayaran atau nota kas diunggah ke bucket `receipts` dengan 
 3. **Mencatat Iuran:** Buka tab **Data KK** &rarr; ketuk **+ Catat Bayar** &rarr; pilih nama KK &rarr; pilih kategori/bayar keseluruhan &rarr; pilih metode & petugas &rarr; foto bukti &rarr; **Simpan Pembayaran**.
 4. **Menyetujui Transaksi (Pak RT / Wakil RT / Developer):** Ketuk ikon **Lonceng (🔔)** di pojok kanan atas atau buka tab **Cash RT** &rarr; cek **Lihat Bukti** &rarr; ketuk **Approve** atau **Reject**.
 5. **Mengunduh Laporan & Data Massal:** Buka tab **Lainnya** untuk mengunduh laporan **PNG / PDF**, **Export / Import Excel Warga**, mengubah **Tema (Terang / Gelap / Device)**, dan mengecek **Update Aplikasi**.
+
+---
+
+## Riwayat Perubahan (Changelog)
+Lihat catatan lengkap perubahan per versi pada file [CHANGELOG.md](CHANGELOG.md).
