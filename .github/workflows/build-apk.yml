@@ -20,9 +20,12 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Build Debug APK
-        working-directory: extracted_repo/android
-        run: gradle assembleDebug --no-daemon
+        run: |
+          ANDROID_DIR=$(dirname $(find extracted_repo -name "settings.gradle.kts" | head -n 1))
+          printf "android.useAndroidX=true\nandroid.enableJetifier=true\nandroid.suppressUnsupportedCompileSdk=35\norg.gradle.jvmargs=-Xmx2048m\n" > "$ANDROID_DIR/gradle.properties"
+          cd "$ANDROID_DIR"
+          gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: WargaKITA-debug-apk
-          path: extracted_repo/android/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/app-debug.apk"
