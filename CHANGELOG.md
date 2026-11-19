@@ -4,7 +4,19 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat dalam file ini.
 
 ---
 
-## [v1.13.0] - 2026-11-19 (Latest)
+## [v1.13.1] - 2026-11-19 (Latest)
+
+### Ditambahkan
+- **Kalender Ulang Tahun Warga Permanen:** Menampilkan tanggal ulang tahun warga berstatus `Permanen` pada kalender (titik oranye) serta daftar khusus yang terpisah dari **Agenda Resmi RT**.
+- **Tombol Telepon & WhatsApp Kepala Keluarga:** Akses langsung 1-ketuk (`tel:` dan `wa.me`) di kartu Kepala Keluarga pada halaman **Detail KK** menggunakan nomor telepon terdaftar.
+
+### Diperbaiki
+- **Warna Tab Filter Status Warga:** Tab **Semua**, **Permanen**, **Kontrak**, **Kost**, dan **Pindah Domisili** kini memiliki warna aktif masing-masing yang kontras di mode terang maupun gelap.
+- **Ikon Mata Login Tercentang:** Tombol tampilkan password pada layar login kini memakai ikon mata dengan tanda centang (`✓`) saat password ditampilkan.
+
+---
+
+## [v1.13.0] - 2026-11-19
 
 ### Ditambahkan
 - **Filter & Pencarian Lanjutan Cash RT:** Pencarian teks (transaksi, kategori, petugas, metode), filter status (`Pending`, `Approved`, `Rejected`), filter tipe (`Pemasukan`, `Pengeluaran`), serta filter nama petugas di **Riwayat Transaksi Detail**.
