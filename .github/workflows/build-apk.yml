@@ -20,12 +20,9 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Build Debug APK
-        run: |
-          ANDROID_DIR=$(dirname $(find extracted_repo -name "settings.gradle.kts" | head -n 1))
-          echo "Folder Android: $ANDROID_DIR"
-          cd "$ANDROID_DIR"
-          gradle assembleDebug --no-daemon -Pandroid.useAndroidX=true
+        working-directory: extracted_repo/android
+        run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: WargaKITA-debug-apk
-          path: "**/app-debug.apk"
+          path: extracted_repo/android/app/build/outputs/apk/debug/app-debug.apk
