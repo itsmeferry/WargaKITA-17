@@ -4,7 +4,16 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat dalam file ini.
 
 ---
 
-## [v1.13.2] - 2026-11-19 (Latest)
+## [v1.13.3] - 2026-11-19 (Latest)
+
+### Diperbaiki
+- **Ikon Klip Bukti Transaksi:** Memperbaiki teks literal `${IC.paperclip(...)}` pada daftar **Riwayat Transaksi Detail** agar ikon vektor tampil rapi.
+- **Warna Tap/Hover Mode Gelap:** Menghilangkan kilatan latar putih (`hover:bg-slate-50`) saat mengetuk kartu transaksi atau daftar di mode gelap agar teks tetap kontras dan nyaman dibaca.
+- **Pop-up Detail Transaksi Rapi:** Menyembunyikan URL mentah Supabase Storage dari baris keterangan dan menambahkan pembatasan lebar (`overflow-x-hidden` & `break-words`) agar pop-up tidak melebar keluar layar.
+
+---
+
+## [v1.13.2] - 2026-11-19
 
 ### Diperbarui
 - **Desain Ikon Vektor Flat UI Penuh:** Mengganti seluruh emoji pada antarmuka aplikasi dengan ikon vektor Flat UI garis tipis yang seragam dan menyelaraskan palet warna per bagian (Dashboard, Data Warga, Data KK, Cash RT, dan Lainnya) untuk mode terang maupun gelap.
