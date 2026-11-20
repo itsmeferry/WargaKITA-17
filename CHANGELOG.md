@@ -4,50 +4,75 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 
 ---
 
-## [v1.14.0] - 2026-11-20 (Latest)
+## [v1.14.1] - 2026-11-20 (Latest)
+
+### Ditambahkan
+- **6 Ekspresi Lucu & Dinamis Maskot NawakAI (`getNawakSvg`):**
+  - Maskot Wajik Biru kini otomatis berganti ekspresi sesuai momen: **Welcome Ceria** (`welcome`), **Lagi Mikir** (`thinking`), **Selesai & Bangga** (`proud`), **Kaget Pending Approval** (`shocked` + lencana `!`), **Pesta Ultah & Agenda** (`party` + topi pesta & konfeti), dan **Siaga Update** (`update` + panah `↑`).
+- **Efek Suara Unik per Notifikasi (*Web Audio Synthesizer*):**
+  - Nada sintesis ringan tanpa file MP3 eksternal yang berbeda di setiap kejadian: *welcome* (*"Ting-tong-bloop!"*), tips pendataan (*"Pop-pik!"*), berpikir (*"Hmm-tick"*), jawaban selesai (*"Ding-spark!"*), pending approval (*"Triing-koing!"*), ulang tahun/agenda (*"Ta-da!"*), dan wajib update (*"Beep-boop-up!"*).
+- **Suara Bicara Bahasa Jawa Otomatis (`TextToSpeech` Android + Web):**
+  - Menambahkan `AndroidBridge.speakJavanese` & `stopSpeak` di `MainActivity.kt` (plus fallback `speechSynthesis` untuk web) agar setiap *welcome message* dan *popup* tips NawakAI langsung dibacakan dengan suara berbahasa Jawa-Malangan.
+  - Dilengkapi tombol sakelar **Speaker On/Mute** (`🔊/🔇`) di header jendela NawakAI.
+- **Pembacaan Dokumen Lokal Tanpa Kuota API (`Tesseract.js` + `PDF.js`) & *Fuzzy Compare* KK:**
+  - Ketika kuota API Gemini gratis sedang habis, NawakAI otomatis beralih membaca lampiran **PNG, JPG, dan PDF** secara lokal di perangkat (memakai gambar resolusi penuh + *preprocessing* kontras tinggi 2× serta pemindaian khusus area atas KK).
+  - Menambahkan `compareRowsWithWargaKITA` dengan *fuzzy matching* (NIK, tanggal lahir, nama anggota, dan Kepala Keluarga) untuk membandingkan hasil scan terhadap database WargaKITA—data yang sudah ada otomatis dilewati, sedangkan data baru siap diinput dengan persetujuan pengguna.
+- **Memori & Riwayat Percakapan Per Akun (`wk_nawak_history_*` & `wk_nawak_memory_*`):**
+  - Riwayat chat dan catatan penting tersimpan otomatis per pengguna dan dikirim kembali ke NawakAI (`12` pesan terakhir + memori penting) agar NawakAI langsung memahami konteks tanpa mengulang pertanyaan.
+- **Mode Wajib Update + Notifikasi HP Android Langsung:**
+  - Saat versi baru tersedia di GitHub Releases, aplikasi langsung mengirimkan notifikasi ke HP Android (`sendPhoneNotif`) dan menampilkan modal **Wajib Update Aplikasi** (*non-dismissible*, tanpa tombol *Nanti Saja*) lengkap dengan rincian *changelog* terbaru.
+- **Dukungan Lampiran Multimodal & Tempel Data Mentah di Chat NawakAI:**
+  - Mendukung tempel data mentah (`|`, `;`, tab, atau CSV) langsung di chat untuk diimpor ke database (khusus **Developer Admin** & **Pak RT**), serta pembaruan `nawak-ai-edge-function.ts` untuk ekstraksi Scan KK/PDF multimodal.
+
+### Diperbarui
+- **Akses Database Penuh Tanpa Batas 15 KK (`buildNawakContext`):**
+  - Menghapus pembatasan `.slice(0, 15)` sehingga NawakAI membaca seluruh KK aktif (Hijau, Kuning, Merah), seluruh daftar warga, seluruh transaksi pending, agenda, dan ulang tahun, disertai sinkronisasi langsung dari Supabase sebelum menjawab.
+- **Tampilan Proses Berpikir NawakAI 100% ala Gemini AI:**
+  - Menghapus seluruh border kotak di sekitar proses berpikir (`border: none`), menampilkan garis vertikal tipis `1px` dengan tahapan nyata secara *real-time* (*Sinkronisasi data terbaru...* → *Maca seluruh KK & warga...* → *Ngolah jawaban...*), dan ditutup ikon centang **`Selesai`**.
+- **Alur Lampiran File Lebih Rapi (Ikon Klip Saja + Ditahan Sebelum Dikirim):**
+  - Menghapus teks `"Import File"` sehingga hanya tampil ikon klip (`📎`), dan menahan file lampiran sebagai kartu pratinjau di atas kotak ketik sampai pengguna selesai mengetik perintah lalu menekan **Kirim**.
+- **Pemahaman Maksud Lokal Lebih Cerdas:**
+  - Mesin lokal kini mengenali pertanyaan alamat warga (termasuk pencarian alamat di luar Kebonagung / nama jalan), rincian status iuran (Hijau/Kuning/Merah), dan panduan upload Scan KK/PDF.
+- **Pembaruan Versi Build Android (`v1.14.1`):**
+  - Menaikkan `versionCode = 18` (`versionName = "1.14.1"`) di `android/app/build.gradle.kts` dan memperbarui `.github/workflows/build-apk.yml` ke rilis `v1.14.1`.
+
+### Diperbaiki
+- **Responsif Terhadap Keyboard Android di Semua Layar:**
+  - Menambahkan `android:windowSoftInputMode="adjustResize"` di `AndroidManifest.xml`, penanganan `WindowInsets.Type.ime()` pada `MainActivity.kt`, tinggi modal `88dvh`, serta `scrollIntoView` otomatis saat input difokuskan agar kolom ketik tidak tertutupi keyboard.
+- **Perbaikan Fungsi Notifikasi Update (`sendAndroidNotification`):**
+  - Menghubungkan `sendAndroidNotification` ke `sendPhoneNotif` agar notifikasi pembaruan aplikasi benar-benar masuk ke sistem notifikasi Android.
+- **Penghapusan Pesan Error Teknis Kuota API:**
+  - Menghilangkan tampilan error mentah (`quota exceeded` / *high demand*) dari chat pengguna saat lampiran diproses secara lokal.
+- **Kontras Teks Proses NawakAI di Mode Gelap:**
+  - Menghapus latar abu-abu terang pada kotak proses sehingga teks selalu jelas di mode Terang maupun Gelap.
+
+---
+
+## [v1.14.0] - 2026-11-20
 
 ### Ditambahkan
 - **Asisten Pintar NawakAI (Gemini AI + Supabase Edge Function `nawak-ai`):**
   - Integrasi penuh dengan Supabase Edge Function `nawak-ai` menggunakan native `Deno.serve` dan mekanisme *fallback* model berantai (`gemini-3.8-flash` → `gemini-flash-latest` → `gemini-3-flash-preview`) serta `thinkingConfig: { thinkingBudget: 0 }` untuk respons cepat.
-  - Mendukung percakapan cerdas berbasis data *real-time* RT 17 langsung dari aplikasi (kas RT, iuran, tunggakan, data warga, agenda kegiatan, dan ulang tahun).
 - **Ikon Melayang Wajik Biru Interaktif (*Draggable*) & Gelembung Sapaan Mengikuti Posisi:**
-  - Maskot **NawakAI** bergaya Flat UI (`#1d4ed8` dan `#60a5fa`) dilengkapi animasi mengambang (*bob*), berkedip (*blink*), tersenyum (*smile*), dan kilau (*spark*), dengan posisi tersimpan otomatis di `localStorage` (`wk_nawak_pos`).
-  - Gelembung sapaan (*welcome bubble* kontekstual Pagi/Siang/Sore/Malam & situasi RT 17) dilengkapi ekor *speech bubble* dan **otomatis bergerak mengikuti posisi ikon NawakAI secara *real-time*** saat digeser, responsif di sisi kiri/kanan layar.
-  - Tips interaktif kontekstual dari NawakAI saat pengguna membuka tab **Data Warga**, **Data KK**, atau **Cash RT**.
+  - Maskot **NawakAI** bergaya Flat UI (`#1d4ed8` dan `#60a5fa`) dengan posisi tersimpan otomatis di `localStorage` (`wk_nawak_pos`).
+  - Gelembung sapaan (*welcome bubble* kontekstual Pagi/Siang/Sore/Malam & situasi RT 17) dilengkapi ekor *speech bubble* yang otomatis bergerak mengikuti posisi ikon NawakAI secara *real-time*.
 - **Import File Data Warga via NawakAI (Khusus Developer & Pak RT):**
-  - Tombol lampiran file (`.xlsx`, `.xls`, `.csv`) di dalam jendela chat NawakAI untuk memproses dan mengimpor data warga ke WargaKITA dengan pembatasan hak akses ketat hanya untuk **Developer Admin** dan **Pak RT**.
+  - Tombol lampiran file (`.xlsx`, `.xls`, `.csv`) di dalam jendela chat NawakAI dengan pembatasan hak akses ketat hanya untuk **Developer Admin** dan **Pak RT**.
 - **Export Data Warga 4 Format Lengkap via NawakAI (`exportWargaByFormat`):**
-  - Mendukung ekspor data warga menyeluruh dalam format **PNG**, **Excel (`.xlsx`)**, **Word (`.doc`)**, dan **PDF** menggunakan struktur 7 kolom lengkap yang identik dengan Menu Lainnya (`No / Anggota`, `Alamat`, `Nomor KK`, `NIK`, `Hubungan Keluarga`, `No. HP`, `Status`).
+  - Ekspor data warga menyeluruh dalam format **PNG**, **Excel (`.xlsx`)**, **Word (`.doc`)**, dan **PDF** menggunakan struktur 7 kolom lengkap yang identik dengan Menu Lainnya.
 - **Notifikasi HP Berkala (Pending Approval 1 Jam Sekali + Agenda & Ultah):**
-  - Pengingat otomatis ke notifikasi HP Android setiap minimal **1 jam sekali** bagi **Pak RT**, **Wakil RT**, dan **Developer** selama masih ada transaksi **Pending Approval**.
-  - Pengingat otomatis di notifikasi HP Android untuk **Agenda Resmi RT (H-3 hingga H-0)** serta **Ulang Tahun Kepala Keluarga** hari ini, lengkap dengan *hook* `onResume` & pengecekan berkala di `MainActivity.kt`.
+  - Pengingat otomatis ke notifikasi HP Android setiap minimal **1 jam sekali** bagi **Pak RT**, **Wakil RT**, dan **Developer** selama masih ada transaksi **Pending Approval**, serta pengingat **Agenda Resmi RT (H-3 hingga H-0)** dan **Ulang Tahun Kepala Keluarga**.
 - **Kartu Edit Profil Pengguna (Flat UI):**
-  - Menambahkan tombol dan modal **Edit Profil Saya** pada kartu profil di tab **Lainnya** agar setiap pengguna dapat memperbarui Nama Tampilan, No. HP / WhatsApp, dan Keterangan/Jabatan.
-  - Menyimpan perubahan melalui `supabase.auth.updateUser` (`user_metadata`) dan sinkronisasi lokal sehingga tetap berhasil meskipun RLS tabel `profiles` membatasi pembaruan langsung.
+  - Tombol dan modal **Edit Profil Saya** pada kartu profil di tab **Lainnya** untuk memperbarui Nama Tampilan, No. HP / WhatsApp, dan Keterangan/Jabatan via `supabase.auth.updateUser` + sinkronisasi lokal.
 - **Akses Login Khusus 4 Bendahara RT (Auto-Default & Terkunci):**
-  - Dukungan akun login terpisah untuk masing-masing petugas Bendahara RT dengan pengisian otomatis dan penguncian kategori iuran serta nama petugas pada form **Catat Pembayaran Iuran** dan **Catat Transaksi Kas RT**:
-    - **Novan Hermawan** (`novan@wargakita.id`) → **17 Agustus**
-    - **Ahmad Abin** (`ahmadabin@wargakita.id`) → **Keuangan Social**
-    - **A. Teguh Purwanto** (`teguh@wargakita.id`) → **Pembangunan + Voging**
-    - **Jodik Purwanto** (`jodik@wargakita.id`) → **Rukem + Juri Kunci**
-  - Menambahkan keempat akun Bendahara baru tersebut ke daftar **Ubah Password User Lain** pada **Panel Khusus Developer**.
+  - Pengisian otomatis dan penguncian kategori iuran serta nama petugas untuk **Novan Hermawan** (*17 Agustus*), **Ahmad Abin** (*Keuangan Social*), **A. Teguh Purwanto** (*Pembangunan + Voging*), dan **Jodik Purwanto** (*Rukem + Juri Kunci*), serta penambahan keempatnya ke menu **Ubah Password User Lain**.
 - **Desain Baru Kartu Ucapan Ulang Tahun (3 Tema Flat UI):**
-  - Modal **Kartu Ucapan Ulang Tahun** dengan 3 pilihan tema Flat UI (**Biru RT 17**, **Navy Emas**, **Hijau Segar**), ilustrasi kue ulang tahun & konfeti vektor, tombol **Bagikan / Unduh Gambar Kartu (PNG)**, dan tombol **Kirim Ucapan ke WhatsApp Warga** (`wa.me`).
-
-### Diperbarui
-- **Indikator Loading NawakAI ala Gemini:** Mengganti teks tunggu statis menjadi kartu berpikir animasi dengan ikon *spark* berputar dan *timeline* langkah (*"Maca data warga, KK & kas RT 17..."*, *"Ngecek iuran, agenda & ulang tahun..."*, *"Nyusun jawaban Jawa-Malangan..."*).
-- **Gaya Bahasa Jawa-Malangan & Gelembung Chat Flat UI Minimalis:** Respons NawakAI diutamakan memakai bahasa Jawa-Malangan yang lucu, unik, dan ringkas dalam gelembung chat proporsional (`w-fit max-w-[84%]`).
-- **Perluasan Skill Mesin Lokal NawakAI:** Cek data warga, status iuran & tunggakan per KK, pencarian petugas penagih, rincian pengeluaran kas, rekap kas tahunan 12 bulan, draf pengumuman WhatsApp, panduan aplikasi, dan pemicu Kartu Ucapan Ulang Tahun.
-- **Ikon & Logo WargaKITA Tersemat Base64:** Menyematkan ikon resmi `WargaKITA` langsung sebagai Data URI Base64 agar tampil konsisten di layar Login, Dashboard, dan seluruh aplikasi tanpa bergantung pada path file eksternal.
-- **Ikon Mata Coret pada Login:** Mengganti ikon centang hijau pada tombol tampilkan password menjadi ikon **mata dicoret (*eye-slash*)** standar.
-- **Pembaruan Versi Build Android & GitHub Actions (`v1.14.0`):** Menaikkan `versionCode = 17` (`versionName = "1.14.0"`) di `build.gradle.kts` dan memperbarui `.github/workflows/build-apk.yml` ke tag `v1.14.0`.
+  - Pilihan tema **Biru RT 17**, **Navy Emas**, dan **Hijau Segar** dengan ilustrasi kue & konfeti vektor, unduh PNG, dan kirim langsung ke WhatsApp warga.
 
 ### Diperbaiki
-- **Sinkronisasi Edit Alamat Warga ke Data KK:** Memperbaiki fungsi simpan **Edit Data Warga** agar pembaruan alamat turut memperbarui kolom `address` pada tabel `households` serta menampilkan alamat terbaru secara konsisten di **Data Warga**, **Data KK**, dan **Detail KK**.
-- **Perbaikan Tombol Edit Profil, Ubah Password User Lain & Reset Data Bulanan:** Memindahkan blok skrip yang sempat tersisip di dalam tag `<script src="...">` pada `<head>` ke dalam `<script>` utama sehingga seluruh tombol di tab **Lainnya** dan **Panel Khusus Developer** berfungsi normal.
-- **Perbaikan Simpan Edit Profil (`permission denied for table profiles`):** Menambahkan penyimpanan via `db.auth.updateUser` + `localStorage` agar edit profil tidak gagal karena pembatasan RLS tabel `profiles`.
-- **Pencegahan *Ghost-Click* Saat Membuka NawakAI:** Menambahkan `touchend preventDefault` dan jeda pengaman `320ms` agar NawakAI selalu membuka **Beranda NawakAI** terlebih dahulu tanpa memicu pertanyaan otomatis.
-- **Silent Local Fallback Tanpa Pesan Error Teknis:** Menghapus tampilan pesan error mentah (kuota API, *503 high demand*, *compute resources*) dari layar pengguna dan otomatis beralih ke mesin lokal Jawa-Malangan.
+- **Sinkronisasi Edit Alamat Warga ke Data KK:** Memperbarui `households.address` saat alamat warga diedit.
+- **Perbaikan Tombol Edit Profil, Ubah Password User Lain & Reset Data Bulanan:** Memindahkan blok skrip yang sempat tersisip di `<head>` ke dalam `<script>` utama.
+- **Ikon Logo Base64, Ikon Mata Coret Login, Anti *Ghost-Click* `320ms`, & *Silent Local Fallback*.**
 
 ---
 
@@ -96,18 +121,14 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 ## [v1.12.0] - 2026-11-19
 
 ### Ditambahkan
-- **Supabase Storage untuk Bukti Transaksi (`receipts`):** Foto bukti pembayaran iuran dan nota kas kini otomatis diunggah ke Supabase Storage dengan struktur folder `TAHUN/BULAN/PEMASUKKAN` atau `PENGELUARAN` serta penamaan file terstandar (`Pemasukkan_Tanggal_NamaWarga` / `Lainnya_Nominal_NamaPemasukkan` / `Pengeluaran_Nominal_NamaPengeluaran`), sehingga dapat dilihat lintas perangkat oleh seluruh pengurus.
-- **Petugas Pemeriksa & Penginput Tagihan (A–Z, Wajib):** Pilihan wajib petugas (**A. Teguh Purwanto**, **Ahmad Abin**, **Jodik Purwanto**, **Novan Hermawan**) pada pencatatan iuran serta pencatatan kas oleh Bendahara/Sekretaris, lengkap dengan tampilan nama petugas di **Riwayat Transaksi Detail** dan pop-up **Detail Transaksi**.
-- **Import & Export Massal Database Warga:** Fitur unduh **Template Excel (`.xlsx`)**, **Export Database Warga Global**, dan **Import Massal Warga (`.xlsx` / `.csv`)** yang otomatis mengelompokkan data berdasarkan Nomor KK di tab **Lainnya**.
-- **Sinkronisasi Kalender HP & Pengingat Kegiatan:** Tombol **Simpan ke HP** pada setiap agenda di **Kalender Kegiatan Warga** untuk menyimpan acara beserta pengingat (60 & 15 menit sebelumnya) ke Kalender Android, serta notifikasi HP otomatis untuk kegiatan hari ini/besok.
-- **Tema Aplikasi (Terang, Gelap, Ikuti Device):** Pengaturan tema Flat UI kontras tinggi di tab **Lainnya** yang mendeteksi tema gelap/terang perangkat Android secara *real-time*.
-- **Cek Update Otomatis via GitHub Releases:** Menampilkan versi terpasang (`v1.12.0`), tombol **Unduh APK Terbaru**, tombol **Cek Update Aplikasi**, serta pop-up & notifikasi otomatis saat versi baru tersedia di GitHub Releases.
-- **Pop-up Detail Riwayat Aktivitas Akun:** Setiap baris di **Riwayat Aktivitas Akun Anda** dapat diketuk untuk melihat detail aktivitas, kategori, pelaku, dan waktu lengkap; pencatatan aktivitas kini aktif untuk seluruh role login.
+- **Supabase Storage untuk Bukti Transaksi (`receipts`):** Foto bukti pembayaran iuran dan nota kas otomatis diunggah ke Supabase Storage dengan struktur folder terstandar.
+- **Petugas Pemeriksa & Penginput Tagihan (A–Z, Wajib):** Pilihan wajib petugas pada pencatatan iuran serta pencatatan kas oleh Bendahara/Sekretaris.
+- **Import & Export Massal Database Warga:** Fitur unduh **Template Excel (`.xlsx`)**, **Export Database Warga Global**, dan **Import Massal Warga (`.xlsx` / `.csv`)**.
+- **Sinkronisasi Kalender HP & Pengingat Kegiatan:** Tombol **Simpan ke HP** pada setiap agenda di **Kalender Kegiatan Warga**.
+- **Tema Aplikasi (Terang, Gelap, Ikuti Device)**, **Cek Update Otomatis via GitHub Releases**, dan **Pop-up Detail Riwayat Aktivitas Akun**.
 
 ### Diperbaiki
-- **Alur Persetujuan (*Pending Approval*) Bendahara & Sekretaris:** Seluruh pencatatan pemasukan maupun pengeluaran oleh role **Bendahara RT** dan **Sekretaris RT** kini selalu berstatus **Pending Approval** hingga disetujui oleh **Pak RT**, **Wakil RT**, atau **Developer Admin**.
-- **Pembersihan KK Kosong (`0 anggota`):** KK yang seluruh warganya telah dihapus otomatis dibersihkan dan tidak lagi muncul di filter **Tanpa Tagihan**.
-- **Stabilitas Navigasi Bawah & Modal:** Tab menu bawah kini menggunakan *grid* 5 kolom dengan ukuran tetap dan *safe-area padding* Android agar tidak berubah ukuran atau terpotong; wadah modal detail kini tampil solid di mode terang maupun gelap.
+- **Alur Persetujuan (*Pending Approval*) Bendahara & Sekretaris**, **Pembersihan KK Kosong (`0 anggota`)**, dan **Stabilitas Navigasi Bawah & Modal**.
 
 ---
 
@@ -121,14 +142,11 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 ## [v1.10.0] - 2026-11-18
 
 ### Ditambahkan
-- **Pemisahan Input Warga Baru (1 KK) & Warga Lama (KK Ada):** Mendukung input satu keluarga penuh sekaligus banyak anggota dalam satu kali simpan.
-- **Pop-up Detail Transaksi & Hapus Warga:** Menambahkan pop-up detail saat baris transaksi diketuk serta hak akses hapus warga untuk **Developer**, **Pak RT**, dan **Wakil RT**.
-- **Export Laporan PDF/PNG & Excel Warga:** Dukungan bagikan langsung laporan keuangan bulanan ke PDF/PNG dan unduh daftar warga terkelompok per KK ke `.xlsx`.
-- **Izin Kamera Langsung & Notifikasi Android:** Integrasi kamera langsung untuk foto bukti bayar, notifikasi sistem Android, *pull-to-refresh*, serta penanganan tombol *Back* Android.
+- **Pemisahan Input Warga Baru (1 KK) & Warga Lama (KK Ada)**, **Pop-up Detail Transaksi & Hapus Warga**, **Export Laporan PDF/PNG & Excel Warga**, serta **Izin Kamera Langsung & Notifikasi Android**.
 
 ---
 
 ## [v1.0.0] - 2026-11-17
 
 ### Ditambahkan
-- Rilis awal **WargaKITA** (Flat UI) dengan 5 tab utama (**Dashboard**, **Data Warga**, **Data KK**, **Cash RT**, **Lainnya**), autentikasi 5 role `@wargakita.id` terintegrasi Supabase, **Kalender Kegiatan Warga**, serta fitur **Catat Bayar** (QRIS a.n. Fibriono, Transfer Bank, Tunai).
+- Rilis awal **WargaKITA** (Flat UI) dengan 5 tab utama (**Dashboard**, **Data Warga**, **Data KK**, **Cash RT**, **Lainnya**), autentikasi role `@wargakita.id` terintegrasi Supabase, **Kalender Kegiatan Warga**, serta fitur **Catat Bayar** (QRIS a.n. Fibriono, Transfer Bank, Tunai).
