@@ -30,7 +30,7 @@ Modal khusus untuk membuat kartu ucapan ulang tahun bagi **Kepala Keluarga (Perm
 ### 4. NawakAI — Tampilan Chat Bergaya Gemini & Sapaan Sinkron WIB Malang
 Membuka ikon Wajik Biru akan menampilkan **NawakAI** dengan antarmuka **bergaya Gemini** yang adaptif terhadap Tema Terang maupun Gelap (OLED `#000000`, *bubble* user `#28292c`, kotak input `#1e1f20`), ikon resmi **Wajik NawakAI + teks `NawakAI RT 17`** tepat di tengah header dengan warna menyesuaikan tema, serta pengaman *anti ghost-click* `320ms`.
 - **Sapaan Awal Sinkron Zona Waktu WIB (`Asia/Jakarta`) Malang:** Saat pertama kali masuk aplikasi, NawakAI **wajib** mengucapkan salam sesuai waktu lokal Malang yang sinkron persis antara teks *bubble* dan suara MP3-nya (**04.00–10.59 WIB** *Sugeng enjang*, **11.00–16.59 WIB** *Sugeng siang*, **17.00–03.59 WIB** *Sugeng dalu*), sedangkan pengingat agenda/ulang tahun berjalan secara berkala tanpa mengganggu saat baru masuk aplikasi.
-- **Gelembung Kontekstual Mengikuti Posisi:** Saat pengguna berpindah ke tab **Data Warga**, **Data KK**, atau **Cash RT**, NawakAI menampilkan *speech bubble* tips kontekstual beserta suara tips (jeda 60 detik) yang otomatis bergerak mengikuti posisi ikon NawakAI saat digeser.
+- **Gelembung Kontekstual Mengikuti Posisi:** Saat pengguna berpindah ke tab **Data Warga**, **Data KK**, atau **Cash RT**, NawakAI menampilkan *speech bubble* tips kontekstual dengan jeda berkala (minimal 2 jam antar popup & 6 jam per tab), di mana hanya tab **Data Warga** yang bersuara maksimal **1×24 jam** sementara tab **Data KK** dan **Cash RT** tampil tenang tanpa suara.
 
 ![Beranda NawakAI](docs/screenshots/04_nawak_ai_beranda.png)
 

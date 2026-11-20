@@ -23,8 +23,10 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 - **Sinkronisasi Salam Masuk Sesuai Jam WIB Malang & Pengingat Berkala:**
   - Mengunci perhitungan jam ke zona waktu **WIB (`Asia/Jakarta`)** wilayah Malang dan menyinkronkan teks *bubble* dengan isi tepat dari 3 audio sapaan ElevenLabs (**04.00–10.59 WIB** *Sugeng enjang* / `welcome_pagi`, **11.00–16.59 WIB** *Sugeng siang* / `welcome_siang`, **17.00–03.59 WIB** *Sugeng dalu* / `welcome_malam`).
   - Saat pertama kali masuk aplikasi, NawakAI kini **selalu** mengucapkan salam sesuai waktu, sedangkan pengingat **Agenda Penting RT** & **Ulang Tahun Kepala Keluarga** dipindahkan ke pengecekan berkala di dalam aplikasi (maksimal 1 kali per hari).
-- **Suara Tips Tab Data KK & Cash RT:**
-  - Mempersingkat jeda ulang pemutaran suara tips kontekstual menjadi 60 detik saat berpindah ke tab **Data Warga**, **Data KK**, dan **Cash RT**.
+- **Aturan Suara & Jeda Popup Tips Tab (Data Warga, Data KK & Cash RT):**
+  - Suara tips pada tab **Data Warga** kini hanya berbunyi maksimal **1× dalam 24 jam**.
+  - Tab **Data KK** dan **Cash RT** dibuat **diam (tanpa suara)** dan hanya menampilkan popup teks.
+  - Menambahkan jeda global minimal **2 jam** antar popup tips dan **6 jam** per tab agar tidak mengganggu aktivitas pengguna.
 - **Pembaruan Versi Build Android (`v1.14.2`):**
   - Menaikkan `versionCode = 19` (`versionName = "1.14.2"`) di `android/app/build.gradle.kts`, memperbarui `APP_VERSION` di `index.html` & `assets/wargakita.html`, serta menyesuaikan `.github/workflows/build-apk.yml`, `README.md`, dan `CHANGELOG.md`.
 
