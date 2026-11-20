@@ -56,22 +56,22 @@ jobs:
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.14.0.apk
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.14.1.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.14.0.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.14.1.apk
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.14.0-apk
-          path: WargaKITA-RT17-v1.14.0.apk
+          name: WargaKITA-v1.14.1-apk
+          path: WargaKITA-RT17-v1.14.1.apk
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.14.0' }}
-          name: WargaKITA RT 17 (v1.14.0)
-          files: WargaKITA-RT17-v1.14.0.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.14.1' }}
+          name: WargaKITA RT 17 (v1.14.1)
+          files: WargaKITA-RT17-v1.14.1.apk
           make_latest: true
