@@ -1,10 +1,49 @@
 # Changelog — WargaKITA (RT 17 / RW 03 Kebonagung)
 
-Semua perubahan penting pada aplikasi **WargaKITA** dicatat dalam file ini.
+Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dalam file ini.
 
 ---
 
-## [v1.13.3] - 2026-11-19 (Latest)
+## [v1.14.0] - 2026-11-20 (Latest)
+
+### Ditambahkan
+- **Asisten Pintar NawakAI (Gemini AI + Supabase Edge Function `nawak-ai`):**
+  - Integrasi penuh dengan Supabase Edge Function `nawak-ai` menggunakan native `Deno.serve` dan mekanisme *fallback* model berantai (`gemini-3.8-flash` → `gemini-flash-latest` → `gemini-3-flash-preview`) serta `thinkingConfig: { thinkingBudget: 0 }` untuk respons cepat tanpa jeda berlebih.
+  - Mendukung percakapan cerdas berbasis data *real-time* RT 17 langsung dari aplikasi (kas RT, iuran, tunggakan, data warga, agenda kegiatan, dan ulang tahun).
+- **Ikon Melayang Wajik Biru Interaktif (*Draggable*):**
+  - Maskot **NawakAI** bergaya Flat UI (`#1d4ed8` dan `#60a5fa`) dilengkapi animasi mengambang (*bob*), berkedip (*blink*), tersenyum (*smile*), dan kilau (*spark*).
+  - Posisi ikon dapat digeser bebas di layar dan tersimpan otomatis di perangkat (`localStorage` `wk_nawak_pos`).
+- **Welcome Bubble Kontekstual (Pagi, Siang, Sore, Malam):**
+  - Pesan sapaan di samping ikon NawakAI menyesuaikan waktu saat ini (**Pagi**, **Siang**, **Sore**, **Malam**) sekaligus membaca situasi terkini RT 17 (jumlah transaksi *Pending Approval*, jadwal agenda H-3 hingga H-0, serta Kepala Keluarga yang berulang tahun hari ini).
+- **Import File Data Warga via NawakAI (Khusus Developer & Pak RT):**
+  - Tombol lampiran file (`.xlsx`, `.xls`, `.csv`) langsung di dalam jendela chat NawakAI untuk membantu menginput atau mengimpor data warga ke WargaKITA.
+  - Fitur ini dibatasi secara ketat hanya untuk role **Developer Admin** dan **Pak RT**.
+- **Export Data Warga 4 Format via NawakAI (`exportWargaByFormat`):**
+  - NawakAI kini dapat mengekspor data warga secara rapi sesuai pilihan format pengguna: **PNG** (gambar tabel siap bagikan), **Excel (`.xlsx`)**, **Word (`.doc`)**, dan **PDF**.
+- **Notifikasi HP Android Agenda Resmi RT (H-3 hingga H-0):**
+  - Pengingat otomatis di notifikasi Android mulai 3 hari sebelum acara hingga hari-H untuk setiap **Agenda Resmi RT** yang terjadwal.
+- **Desain Baru Kartu Ucapan Ulang Tahun (3 Tema Flat UI):**
+  - Pembaruan menyeluruh modal **Kartu Ucapan Ulang Tahun** dengan 3 pilihan tema Flat UI (**Biru RT 17**, **Navy Emas**, **Hijau Segar**), ilustrasi kue ulang tahun dan konfeti vektor, tombol **Bagikan / Unduh Gambar Kartu (PNG)**, serta tombol **Kirim Ucapan ke WhatsApp Warga** (`wa.me`).
+
+### Diperbarui
+- **Gaya Bahasa Jawa-Malangan yang Lucu, Unik & Mudah Dibaca:**
+  - Mengutamakan respons **NawakAI** berbahasa **Jawa-Malangan** yang hangat, jenaka, dan ringkas agar nyaman dibaca cepat oleh pengurus RT 17.
+- **Tampilan Beranda NawakAI & Gelembung Chat Flat UI Minimalis:**
+  - Merombak ukuran gelembung pesan yang sebelumnya terlalu besar menjadi proporsional (`w-fit max-w-[84%]`), bersih, dan rapi dengan pendekatan Flat UI yang segar dan minimalis.
+- **Perluasan Skill Mesin Lokal NawakAI (`Asisten Pintar RT 17`):**
+  - Memperkaya kemampuan pemrosesan lokal untuk pencarian data warga, cek status iuran dan tunggakan per KK, pencarian nama petugas penagih, rincian pengeluaran kas, ringkasan kas tahunan 12 bulan, pembuatan draf pengumuman grup WhatsApp, panduan fitur aplikasi, serta pembukaan langsung modal Kartu Ucapan Ulang Tahun.
+- **Pembaruan Versi Build Android & GitHub Actions (`v1.14.0`):**
+  - Menaikkan `versionCode` menjadi `17` dan `versionName` menjadi `"1.14.0"` pada `android/app/build.gradle.kts`, serta memperbarui `.github/workflows/build-apk.yml` untuk merilis `WargaKITA-RT17-v1.14.0.apk`.
+
+### Diperbaiki
+- **Pencegahan *Ghost-Click* Saat Membuka NawakAI:**
+  - Menambahkan `touchend preventDefault` dan jeda pengaman `320ms` saat jendela NawakAI dibuka sehingga pengguna selalu masuk ke **Beranda / Dashboard NawakAI** terlebih dahulu tanpa tidak sengaja memicu pertanyaan pertama secara otomatis.
+- **Silent Local Fallback Tanpa Pesan Error Teknis:**
+  - Menghapus seluruh tampilan pesan error teknis (seperti batas kuota API, *503 high demand*, atau *compute resources*) dari antarmuka pengguna; apabila Edge Function sedang sibuk atau gagal terhubung, NawakAI langsung menjawab mulus menggunakan mesin lokal Jawa-Malangan.
+
+---
+
+## [v1.13.3] - 2026-11-19
 
 ### Diperbaiki
 - **Ikon Klip Bukti Transaksi:** Memperbaiki teks literal `${IC.paperclip(...)}` pada daftar **Riwayat Transaksi Detail** agar ikon vektor tampil rapi.
