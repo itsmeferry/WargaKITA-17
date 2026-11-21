@@ -1,3 +1,27 @@
+## [1.14.4] — 2026-11-22
+
+### ✨ Ditambahkan (New Features)
+- **Checkbox Kolom & Export PNG Multi-Halaman (NawakAI):** Pengguna dapat mencentang kolom tertentu (`No / Anggota`, `Alamat`, `Nomor KK`, `NIK`, `Hubungan`, `No. HP`, `Status`) sebelum export ke PNG, Excel, Word, atau PDF. Format PNG otomatis dipecah menjadi beberapa gambar (maks. 28 baris/halaman) agar tetap tajam dan mudah dibaca.
+- **Auto-Simpan ke Storage HP & Share Instan (`MainActivity.kt`):** File hasil export otomatis tersimpan ke folder `Download/WargaKITA` (Excel, Word, PDF) atau `Pictures/WargaKITA` (PNG) lalu langsung membuka dialog Bagikan (Share) perangkat Android.
+- **QRIS Khusus per Akun Petugas:** Tampilan QRIS dan penyimpanan gambar QRIS (`wk_custom_qris_img_<user_id>`) dipisahkan per akun login sehingga tiap petugas Bendahara hanya menampilkan QRIS atas namanya sendiri.
+- **Auto-Remove Agenda (+2 Menit) & Sinkron Kalender HP:** Agenda manual yang melewati waktu jadwalnya + 2 menit otomatis terhapus dari aplikasi, database `community_events`, dan Kalender HP (`CalendarContract`), serta otomatis menyinkronkan agenda dan ulang tahun warga ke Kalender HP.
+- **Validasi Wajib Bukti Pembayaran:** Tombol **Simpan Pembayaran** kini mewajibkan lampiran foto bukti pembayaran warga (Galeri / Foto Langsung) dengan penyorotan kotak merah dan pesan peringatan jika belum dilampirkan.
+- **Dukungan Android Lawas (`minSdk = 23`):** Menurunkan batas minimum Android dari API 26 (8.0) ke **API 23 (Android 6.0 Marshmallow)** disertai akselerasi hardware WebView (`LAYER_TYPE_HARDWARE`).
+- **Migrasi RLS Wakil RT (`supabase/006_wakil_rt_approval_rls.sql`):** Memberikan izin RLS penuh bagi role `wakil_rt` untuk menyetujui/menolak transaksi kas dan melihat pembayaran serta log audit seperti `pak_rt`.
+
+### 🔄 Diperbarui (Improvements & UI/UX)
+- **Animasi Loader Wajah NawakAI:** Menghapus border melingkar dan menghadirkan animasi putaran `360°`, pantulan, mata melirik/berkedip, dan gerak mulut ekspresif saat NawakAI berpikir.
+- **NawakAI Lebih Cepat & Cerdas:** Cache sinkronisasi database 60 detik, penangan lokal instan untuk query data RT (kas, tunggakan, pending, warga meninggal, tanpa tagihan, gender, tanpa NIK/HP, dan pencarian nama/NIK), serta timeout API 10 detik.
+- **Desain Flat UI Modal Persetujuan & Pending Pill:** Pembaruan kartu `.wk-approval-card` dan lencana `.wk-pending-pill` dengan kontras tinggi di Dark Mode dan Light Mode.
+- **Label Pembayaran & Persetujuan:** Memperbarui teks opsi menjadi `QRIS - DANA, Shopee, Gopay`, `Transfer ke Rekening Bank`, dan `Tunai / Cash`, serta menghapus kata *Developer* pada pesan persetujuan menjadi `Menunggu persetujuan Pak RT & Wakil RT`.
+- **Frekuensi Reminder Ulang Tahun Warga:** Dibatasi tepat 2x saja (H-1 sebelum hari H dan 1 jam sebelum hari H pukul 07:00 WIB).
+- **Tata Letak Export Data Warga:** Kolom `Alamat` diperlebar dengan *word-wrap* 2 baris agar tidak menabrak `Nomor KK`, serta `Nomor KK` hanya ditampilkan pada baris Kepala Keluarga.
+
+### 🐛 Diperbaiki (Bug Fixes)
+- **Perbaikan Layar Berkedip Saat Pencarian:** Kolom pencarian di **Data Warga** dan **Data KK** kini hanya memperbarui daftar kartu secara parsial tanpa me-render ulang seluruh halaman.
+- **Sinkronisasi Status Pindah Domisili Keluarga:** Status *Pindah Domisili* pada Kepala Keluarga otomatis menurun ke seluruh anggota keluarga non-meninggal baik di laporan/export maupun saat disimpan ke database.
+- **Akurasi Pencocokan Intent NawakAI:** Menggunakan pencocokan batas kata (*word-boundary*) agar pertanyaan tidak lagi salah rute akibat kemiripan substring.
+
 # Changelog — WargaKITA (RT 17 / RW 03 Kebonagung)
 
 Seluruh riwayat penambahan fitur, pembaruan antarmuka, dan perbaikan *bug* pada aplikasi **WargaKITA** diklasifikasikan secara terperinci pada dokumen ini.

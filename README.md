@@ -1,6 +1,6 @@
 # WargaKITA — Aplikasi Administrasi & Keuangan RT 17 / RW 03 Kebonagung
 
-**WargaKITA** (`v1.14.3`) adalah aplikasi **Android & Web** bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
+**WargaKITA** (`v1.14.4`) adalah aplikasi **Android & Web** bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
 
 ---
 
@@ -168,13 +168,13 @@ Khusus akun `developer@wargakita.id`, tersedia **Panel Khusus Developer** berdes
 | **Bendahara RT** | `bendahara17@wargakita.id`, `novan@wargakita.id`, `ahmadabin@wargakita.id`, `teguh@wargakita.id`, `jodik@wargakita.id` | Ya | Tidak | Tidak | Ya (Pending Approval) | Tidak | Tidak | Ya | Tidak | Tidak |
 | **Sekretaris RT** | `sekretaris17@wargakita.id` | Ya | Ya | Tidak | Tidak | Tidak | Tidak | Ya | Tidak | Tidak |
 
-*(Catatan: Mulai `v1.14.3`, seluruh hak akses di atas dapat dikustomisasi per akun oleh **Developer Admin** melalui 10 centang `custom_permissions` di menu **Kelola User Login**).*
+*(Catatan: Mulai `v1.14.4`, seluruh hak akses di atas dapat dikustomisasi per akun oleh **Developer Admin** melalui 10 centang `custom_permissions` di menu **Kelola User Login**).*
 
 ### Arsitektur Teknis
 1. **Autentikasi & RLS:** Login melalui Supabase Auth (dilengkapi tombol mata intip sandi & wajib ganti sandi pada login awal) serta proteksi **Row Level Security (RLS)** di seluruh tabel PostgreSQL.
 2. **Penyimpanan Bukti Terstruktur:** Foto bukti diunggah ke Supabase Storage bucket `receipts` dengan jalur `TAHUN/BULAN/PEMASUKKAN|PENGELUARAN/`.
 3. **Asisten AI Hibrida:** Supabase Edge Function `nawak-ai` + *silent fallback* mesin lokal + OCR lokal (`Tesseract.js`, `PDF.js`, `Mammoth.js`, `SheetJS`) + 7 audio ElevenLabs MP3 *offline*.
-4. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 20`, `versionName = "1.14.3"`), menandatanganinya dengan *keystore* permanen dari GitHub Secrets, dan merilisnya ke **GitHub Releases**.
+4. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 20`, `versionName = "1.14.4"`), menandatanganinya dengan *keystore* permanen dari GitHub Secrets, dan merilisnya ke **GitHub Releases**.
 
 ---
 
