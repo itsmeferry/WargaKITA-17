@@ -23,6 +23,8 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 - **Sinkronisasi Salam Masuk Sesuai Jam WIB Malang & Pengingat Berkala:**
   - Mengunci perhitungan jam ke zona waktu **WIB (`Asia/Jakarta`)** wilayah Malang dan menyinkronkan teks *bubble* dengan isi tepat dari 3 audio sapaan ElevenLabs (**04.00–10.59 WIB** *Sugeng enjang* / `welcome_pagi`, **11.00–16.59 WIB** *Sugeng siang* / `welcome_siang`, **17.00–03.59 WIB** *Sugeng dalu* / `welcome_malam`).
   - Saat pertama kali masuk aplikasi, NawakAI kini **selalu** mengucapkan salam sesuai waktu, sedangkan pengingat **Agenda Penting RT** & **Ulang Tahun Kepala Keluarga** dipindahkan ke pengecekan berkala di dalam aplikasi (maksimal 1 kali per hari).
+- **Grafik Donat Pemasukan Mencakup Seluruh Kategori Tambahan:**
+  - Memperbarui `getGlobalSummary()` (`allIncomeByCat`), legenda **Cash RT**, grafik donat `cashDonutChart`, serta **Laporan Keuangan 1 Bulan** (PNG/PDF) agar seluruh pemasukan berstatus *Approved* di luar iuran KK (seperti *Sumbangan / Donasi Warga* atau pemasukan lainnya dari `+ Catat Kas`) ikut tampil dengan warna dan persentase masing-masing serta total yang cocok dengan kartu **Pemasukan**.
 - **Aturan Suara & Jeda Popup Tips Tab (Data Warga, Data KK & Cash RT):**
   - Suara tips pada tab **Data Warga** kini hanya berbunyi maksimal **1× dalam 24 jam**.
   - Tab **Data KK** dan **Cash RT** dibuat **diam (tanpa suara)** dan hanya menampilkan popup teks.
@@ -35,6 +37,8 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
   - Menimpa aturan global `html.wk-dark textarea` agar latar belakang `#nawakInput` transparan penuh dan menyatu rapi di dalam kapsul `#1e1f20`.
 - **Perataan Ikon Centang `Selesai` pada Timeline Proses:**
   - Menyamakan lebar wadah titik langkah dan ikon centang `Selesai` (`w-4 h-4`) agar lurus sejajar secara vertikal.
+- **Deklarasi Variabel `s` pada `initCharts()` (`cashDonutChart`):**
+  - Menambahkan `const s = getGlobalSummary()` di dalam blok `donutCanvas` agar grafik donat selalu tergambar meskipun kanvas grafik batang Dashboard tidak sedang aktif.
 
 ---
 

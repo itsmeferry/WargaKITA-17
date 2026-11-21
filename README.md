@@ -100,7 +100,7 @@ Formulir pencatatan iuran bulanan per KK yang mendukung opsi **Bayar Keseluruhan
 ---
 
 ### 12. Cash RT — Ringkasan Saldo, Saldo Awal & Grafik Kategori
-Menampilkan posisi **Saldo Kas Saat Ini**, rincian total **Pemasukan** dan **Pengeluaran** bulan berjalan, tombol **Edit Saldo Awal** (khusus Developer & Pak RT), serta **Grafik Donat Soft-Track dengan Badge Persentase Mengambang** untuk proporsi pemasukan atau pengeluaran per kategori secara interaktif.
+Menampilkan posisi **Saldo Kas Saat Ini**, rincian total **Pemasukan** dan **Pengeluaran** bulan berjalan, tombol **Edit Saldo Awal** (khusus Developer & Pak RT), serta **Grafik Donat Soft-Track dengan Badge Persentase Mengambang** yang menampilkan **seluruh kategori pemasukan** (4 kategori iuran wajib maupun seluruh kategori tambahan seperti *Sumbangan / Donasi Warga*) sehingga total grafik selalu sinkron penuh dengan kartu **Pemasukan** dan **Laporan Keuangan 1 Bulan**.
 
 ![Cash RT Saldo & Grafik Kategori](docs/screenshots/11_cash_rt_saldo_grafik.png)
 
