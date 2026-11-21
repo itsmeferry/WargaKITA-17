@@ -4,7 +4,31 @@ Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dal
 
 ---
 
-## [v1.14.2] - 2026-11-20 (Latest)
+## [v1.14.3] - 2026-11-21 (Latest)
+
+### Ditambahkan
+- **QRIS Layar Penuh Ala Perbankan & Kecerahan Layar Otomatis (`MainActivity.kt`):**
+  - Memilih metode pembayaran **QRIS** atau mengetuk kartu **Buka QR** langsung membuka overlay QRIS layar penuh berlatar kartu putih kontras tinggi untuk **DANA `085607686867` a.n. `FIBRIONO`**, lengkap dengan tombol salin nomor dan unggah tangkapan layar QRIS resmi DANA.
+  - Menambahkan `AndroidBridge.setMaxScreenBrightness(enable)` di `MainActivity.kt` untuk menaikkan kecerahan layar HP Android ke 100% secara otomatis saat QRIS dibuka dan mengembalikannya saat ditutup.
+- **Panel Khusus Developer & Manajemen User Login (`005_developer_user_management.sql`):**
+  - Redesign **Panel Khusus Developer** dengan header Flat UI biru solid berikon gembok, lencana `SUPERUSER`, dan tombol **Kelola User Login**, **Ubah Password User**, serta **Reset Data Bulan Ini ke 0**.
+  - Fitur **Kelola User Login** mendukung lihat seluruh akun (`developer_list_users()`), tambah akun baru, edit profil/role/sandi, hapus akun aman relasi *foreign key* (`developer_delete_user()`), serta **10 centang hak akses granular** (`custom_permissions`) yang selaras dengan role database dan otomatis digabung di `getPerms()`.
+- **Status Kependudukan `Meninggal Dunia`:**
+  - Menambahkan opsi **Meninggal Dunia** pada modal **Tinjau / Edit Data Warga**, filter dan kartu **Data Warga**, **Detail KK** (header & anggota keluarga), serta lencana **`MENINGGAL DUNIA`** pada daftar **Data KK & Iuran** dengan kelas kontras `.wk-badge-deceased` untuk mode Terang dan Gelap (otomatis *Tanpa Tagihan*).
+- **Pop-up Pilihan & Konfirmasi *Frosted-Blur* Flat UI Universal:**
+  - Mengganti seluruh dialog `<select>` bawaan Android dan `window.confirm()` dengan pop-up *frosted-blur* (`openBlurSelectPicker` & `showConfirmModal`) untuk pemilihan bahasa, kategori kas, status warga, hapus akun user login, hapus agenda RT, dan ACC/Tolak transaksi kas.
+- **Template Ucapan Ulang Tahun Sesuai Usia & 10 Kategori Pemasukan Cash RT:**
+  - Menambahkan dropdown 6 template ucapan ulang tahun (*Resmi*, *Sesepuh ≥55 Th*, *Usia Muda*, *Lucu Malangan*, *Lucu Awet Muda*, *Islami*) yang otomatis menyesuaikan usia warga, serta memperluas pilihan kategori pemasukan Cash RT menjadi 10 kategori.
+
+### Diperbarui
+- **Laporan Keuangan PNG Multi-Halaman & PDF Lengkap (`saveAndShareMultipleBase64`):**
+  - Menghapus baris duplikat `Pemasukan Kas Lainnya`, menyertakan seluruh kategori pemasukan (`allIncomeByCat`) dan **Daftar KK Belum Lunas** secara penuh, serta membagi ekspor PNG panjang menjadi beberapa halaman tajam yang dibagikan dalam **1× klik** melalui `Intent.ACTION_SEND_MULTIPLE`.
+- **Donat Chart Tooltip Sisi Luar (`wkOuter`), Dropdown Bahasa Atas (`ID / EN / JV`) & Rekap Kas Fokus Bulan Aktif:**
+  - Menempatkan *tooltip* mengambang di tepi luar irisan donat agar tidak menimpa total di tengah, memindahkan pemilih bahasa menjadi dropdown ringkas di sudut kanan atas **Lainnya**, dan menyorot **Bulan Aktif** pada **Rekap Kas Tahunan** (dengan lipatan `Lihat Semua 12 Bulan ▾`).
+- **Pembaruan Versi Build Android (`v1.14.3`):**
+  - Menaikkan `versionCode = 20` (`versionName = "1.14.3"`) di `android/app/build.gradle.kts` dan `.github/workflows/build-apk.yml`.
+
+## [v1.14.2] - 2026-11-20
 
 ### Ditambahkan
 - **Tampilan Chat NawakAI 100% Bergaya Gemini:**

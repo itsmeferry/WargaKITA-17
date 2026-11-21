@@ -1,10 +1,10 @@
 # WargaKITA — Aplikasi Administrasi & Keuangan RT 17 / RW 03 Kebonagung
 
-**WargaKITA** (`v1.14.2`) adalah aplikasi Android & Web bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
+**WargaKITA** (`v1.14.3`) adalah aplikasi Android & Web bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
 
 ---
 
-## Fitur & Fungsi Utama (v1.14.2)
+## Fitur & Fungsi Utama (v1.14.3)
 
 ### 1. Dashboard Utama, Ringkasan KPI & Grafik Pemasukan
 Menampilkan sapaan sesuai waktu, identifikasi wilayah **RT 17 / RW 03 Kebonagung**, logo **WargaKITA** tersemat langsung (Base64) agar selalu tampil utuh, tombol notifikasi lonceng, serta **4 kartu KPI utama** (*Total KK*, *Total Warga*, *Saldo Kas RT*, dan *Total Tunggakan* bulan berjalan). Di bawahnya tersedia **Grafik Pemasukan 6 Bulan** untuk memantau tren setoran iuran dan kas RT secara visual, serta ikon melayang **NawakAI** (Wajik Biru) yang dapat digeser bebas (*draggable*) dan posisinya tersimpan otomatis.
@@ -135,7 +135,7 @@ Berisi tombol ekspor laporan **Share / Unduh PNG** dan **Share / Unduh PDF**, **
 ---
 
 ### 17. Pengaturan Tema (Terang/Gelap/Device), Bahasa & Wajib Update APK Otomatis
-Menyediakan pengaturan **Tampilan & Tema Aplikasi** (**Terang**, **Gelap**, atau **Device** yang mengikuti warna sistem **Material You** Android secara *real-time* dengan palet Flat UI kontras tinggi) serta pilihan **3 Bahasa** (**Indonesia**, **English**, **Basa Jawa**). Pada bagian paling bawah ditampilkan informasi versi aplikasi terpasang (`v1.14.2`), tombol **Unduh APK Terbaru (GitHub Release)**, dan tombol **Cek Update Aplikasi**. Saat rilis baru tersedia di GitHub Releases (termasuk pengecekan otomatis di latar belakang setiap 2 jam via `UpdateCheckReceiver.kt`), aplikasi langsung mengirimkan **notifikasi HP Android** dan menampilkan pop-up **Wajib Update** lengkap dengan rincian *changelog* terbaru (APK rilis ditandatangani dengan *keystore* permanen sehingga pembaruan langsung menimpa versi lama tanpa *uninstall*).
+Menyediakan pengaturan **Tampilan & Tema Aplikasi** (**Terang**, **Gelap**, atau **Device** yang mengikuti warna sistem **Material You** Android secara *real-time* dengan palet Flat UI kontras tinggi) serta pilihan **3 Bahasa** (**Indonesia**, **English**, **Basa Jawa**). Pada bagian paling bawah ditampilkan informasi versi aplikasi terpasang (`v1.14.3`), tombol **Unduh APK Terbaru (GitHub Release)**, dan tombol **Cek Update Aplikasi**. Saat rilis baru tersedia di GitHub Releases (termasuk pengecekan otomatis di latar belakang setiap 2 jam via `UpdateCheckReceiver.kt`), aplikasi langsung mengirimkan **notifikasi HP Android** dan menampilkan pop-up **Wajib Update** lengkap dengan rincian *changelog* terbaru (APK rilis ditandatangani dengan *keystore* permanen sehingga pembaruan langsung menimpa versi lama tanpa *uninstall*).
 
 ![Pengaturan Tema & Cek Update Aplikasi](docs/screenshots/16_lainnya_aktivitas_tema_update.png)
 
