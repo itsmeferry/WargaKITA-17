@@ -1,137 +1,91 @@
 # Changelog — WargaKITA (RT 17 / RW 03 Kebonagung)
 
-Semua perubahan penting pada aplikasi **WargaKITA** dicatat secara mendetail dalam file ini.
+Seluruh riwayat penambahan fitur, pembaruan antarmuka, dan perbaikan *bug* pada aplikasi **WargaKITA** diklasifikasikan secara terperinci pada dokumen ini.
 
 ---
 
 ## [v1.14.3] - 2026-11-21 (Latest)
 
-### Ditambahkan
+### ✨ Ditambahkan (New Features)
 - **QRIS Layar Penuh Ala Perbankan & Kecerahan Layar Otomatis (`MainActivity.kt`):**
-  - Memilih metode pembayaran **QRIS** atau mengetuk kartu **Buka QR** langsung membuka overlay QRIS layar penuh berlatar kartu putih kontras tinggi untuk **DANA `085607686867` a.n. `FIBRIONO`**, lengkap dengan tombol salin nomor dan unggah tangkapan layar QRIS resmi DANA.
-  - Menambahkan `AndroidBridge.setMaxScreenBrightness(enable)` di `MainActivity.kt` untuk menaikkan kecerahan layar HP Android ke 100% secara otomatis saat QRIS dibuka dan mengembalikannya saat ditutup.
-- **Panel Khusus Developer & Manajemen User Login (`005_developer_user_management.sql`):**
-  - Redesign **Panel Khusus Developer** dengan header Flat UI biru solid berikon gembok, lencana `SUPERUSER`, dan tombol **Kelola User Login**, **Ubah Password User**, serta **Reset Data Bulan Ini ke 0**.
-  - Fitur **Kelola User Login** mendukung lihat seluruh akun (`developer_list_users()`), tambah akun baru, edit profil/role/sandi, hapus akun aman relasi *foreign key* (`developer_delete_user()`), serta **10 centang hak akses granular** (`custom_permissions`) yang selaras dengan role database dan otomatis digabung di `getPerms()`.
+  - Menambahkan modal layar penuh `showQrisFullscreenModal()` untuk pembayaran **QRIS DANA (`085607686867` a.n. `FIBRIONO`)** dengan kartu putih kontras tinggi, tampilan nominal otomatis, tombol salin nomor DANA, serta opsi **Ganti QRIS Asli** untuk menyimpan tangkapan layar QRIS resmi.
+  - Menambahkan `AndroidBridge.setMaxScreenBrightness(enable: Boolean)` di `MainActivity.kt` agar kecerahan layar HP Android otomatis naik ke 100% saat QRIS dibuka dan kembali normal saat ditutup.
+- **Manajemen User Login & 10 Centang Hak Akses Granular (`showManageUsersModal`):**
+  - Menambahkan fitur **Kelola User Login** di **Panel Khusus Developer** untuk melihat seluruh daftar akun (`developer_list_users()`), membuat akun login baru (`developer_create_user()`), mengedit nama/email/role/sandi (`developer_update_user()`), dan menghapus akun (`developer_delete_user()`).
+  - Menambahkan **10 centang hak akses granular** (`custom_permissions`) yang selaras dengan kolom `ROLE_META` (*Lihat Warga & KK, Tambah Warga, Edit Warga, Hapus Warga, Catat Bayar Iuran, Catat Kas RT, Approval Kas, Edit Saldo Awal, Kelola Agenda RT, Lihat NIK Penuh*) dan otomatis digabung pada `getPerms()`.
 - **Status Kependudukan `Meninggal Dunia`:**
-  - Menambahkan opsi **Meninggal Dunia** pada modal **Tinjau / Edit Data Warga**, filter dan kartu **Data Warga**, **Detail KK** (header & anggota keluarga), serta lencana **`MENINGGAL DUNIA`** pada daftar **Data KK & Iuran** dengan kelas kontras `.wk-badge-deceased` untuk mode Terang dan Gelap (otomatis *Tanpa Tagihan*).
+  - Menambahkan opsi **`Meninggal Dunia`** pada modal **Tinjau / Edit Data Warga**, filter dan kartu **Data Warga**, **Detail KK** (header & lencana anggota keluarga), serta daftar **Data KK & Iuran** (`MENINGGAL DUNIA`, otomatis masuk kategori *Tanpa Tagihan* agar tidak ditagih iuran bulanan).
 - **Pop-up Pilihan & Konfirmasi *Frosted-Blur* Flat UI Universal:**
-  - Mengganti seluruh dialog `<select>` bawaan Android dan `window.confirm()` dengan pop-up *frosted-blur* (`openBlurSelectPicker` & `showConfirmModal`) untuk pemilihan bahasa, kategori kas, status warga, hapus akun user login, hapus agenda RT, dan ACC/Tolak transaksi kas.
-- **Template Ucapan Ulang Tahun Sesuai Usia & 10 Kategori Pemasukan Cash RT:**
-  - Menambahkan dropdown 6 template ucapan ulang tahun (*Resmi*, *Sesepuh ≥55 Th*, *Usia Muda*, *Lucu Malangan*, *Lucu Awet Muda*, *Islami*) yang otomatis menyesuaikan usia warga, serta memperluas pilihan kategori pemasukan Cash RT menjadi 10 kategori.
+  - Menambahkan `openBlurSelectPicker()` yang menggantikan seluruh dialog `<select>` bawaan Android dengan pop-up *frosted-blur* (`backdrop-filter: blur(12px)`) selaras tema Terang/Gelap.
+  - Menambahkan `showConfirmModal()` untuk konfirmasi tindakan penting database (*Hapus Akun User Login*, *Hapus Agenda Resmi RT*, *Setujui/ACC & Tolak/Reject Transaksi Kas*).
+- **Template Ucapan Ulang Tahun Sesuai Usia & Ekspansi Kategori Pemasukan:**
+  - Menambahkan dropdown **6 template ucapan ulang tahun** (*Resmi & Hangat*, *Hormat & Doa Sesepuh ≥55 Th*, *Santai Usia Muda*, *Lucu Malangan*, *Lucu Awet Muda*, *Islami*) yang otomatis menyesuaikan usia warga terpilih.
+  - Memperluas pilihan kategori pemasukan di **Catat Transaksi Kas RT** dari 4 menjadi **10 kategori** yang umum digunakan di lingkungan RT.
+- **Dukungan Lampiran Semua Jenis File di NawakAI:**
+  - Membuka tombol `+` NawakAI untuk semua pengguna dan mendukung pembacaan **PNG, JPG, WEBP, PDF (hingga 10 halaman + OCR), Excel/CSV/ODS (seluruh sheet), Word (`.docx` via Mammoth.js & `.doc`), serta TXT/MD/JSON/XML/LOG**, lengkap dengan penyajian data, rangkuman detail, dan deteksi otomatis tombol import database.
+- **Berbagi Laporan Multi-Halaman PNG (`saveAndShareMultipleBase64`):**
+  - Menambahkan `AndroidBridge.saveAndShareMultipleBase64()` menggunakan `Intent.ACTION_SEND_MULTIPLE` di `MainActivity.kt` agar seluruh halaman PNG laporan keuangan dapat dibagikan sekaligus dalam 1× ketuk.
 
-### Diperbarui
-- **Laporan Keuangan PNG Multi-Halaman & PDF Lengkap (`saveAndShareMultipleBase64`):**
-  - Menghapus baris duplikat `Pemasukan Kas Lainnya`, menyertakan seluruh kategori pemasukan (`allIncomeByCat`) dan **Daftar KK Belum Lunas** secara penuh, serta membagi ekspor PNG panjang menjadi beberapa halaman tajam yang dibagikan dalam **1× klik** melalui `Intent.ACTION_SEND_MULTIPLE`.
-- **Donat Chart Tooltip Sisi Luar (`wkOuter`), Dropdown Bahasa Atas (`ID / EN / JV`) & Rekap Kas Fokus Bulan Aktif:**
-  - Menempatkan *tooltip* mengambang di tepi luar irisan donat agar tidak menimpa total di tengah, memindahkan pemilih bahasa menjadi dropdown ringkas di sudut kanan atas **Lainnya**, dan menyorot **Bulan Aktif** pada **Rekap Kas Tahunan** (dengan lipatan `Lihat Semua 12 Bulan ▾`).
-- **Pembaruan Versi Build Android (`v1.14.3`):**
-  - Menaikkan `versionCode = 20` (`versionName = "1.14.3"`) di `android/app/build.gradle.kts` dan `.github/workflows/build-apk.yml`.
+### 🔄 Diperbarui (Improvements & UI/UX)
+- **Tampilan Chat NawakAI Bergaya Gemini:**
+  - Mengubah tata letak chat NawakAI dengan palet adaptif Tema Terang & OLED Gelap (`#000000`, *bubble* user `#28292c`, kapsul input `#1e1f20`), ikon resmi **Wajik NawakAI + `NawakAI RT 17`** di tengah header yang menyesuaikan tema, loader wajah (mata + senyum putih saja), garis vertikal `1px` hingga ikon centang **`Selesai`**, *minimize/expand* pesan panjang (`▾/▴`), kotak ketik `<textarea>` multi-baris (`Takok opo wae nang NawakAI...`), dan pratinjau lampiran di dalam bagian atas kapsul input.
+- **Redesign Panel Khusus Developer (Flat UI) & Dropdown Bahasa Atas (`ID / EN / JV`):**
+  - Memperbarui **Panel Khusus Developer** dengan header biru solid Flat UI berikon gembok + lencana `SUPERUSER` dan teks tombol **`Ubah Password User`**.
+  - Memindahkan pemilih bahasa menjadi dropdown ringkas di sudut kanan atas **Lainnya & Laporan** serta melengkapi terjemahan `ID`, `EN`, dan `JV`.
+- **Grafik Donat Seluruh Kategori Pemasukan & Rekap Kas Fokus Bulan Aktif:**
+  - Memperbarui `getGlobalSummary()` (`allIncomeByCat`), `renderCashRT()`, dan `cashDonutChart` agar seluruh kategori pemasukan tambahan (seperti *Sumbangan / Donasi Warga*) tampil dengan warna dan persentase masing-masing.
+  - Menyorot **Bulan Aktif** pada kartu **Rekap Kas Tahunan** di bagian teratas dengan tombol lipat **`Lihat Semua 12 Bulan ▾`**.
+- **Sinkronisasi Sapaan NawakAI WIB Malang & Aturan Jeda Tips Tab:**
+  - Mengunci jam sapaan awal ke zona waktu **WIB (`Asia/Jakarta`)** agar teks *bubble* dan 3 audio ElevenLabs (`welcome_pagi`, `welcome_siang`, `welcome_malam`) cocok persis, sementara pengingat Agenda RT & Ulang Tahun dijalankan berkala (1×/hari).
+  - Mengatur suara tips tab **Data Warga** menjadi **1×24 jam**, membisukan tab **Data KK** dan **Cash RT** (popup teks saja), dengan jeda global 2 jam & per-tab 6 jam.
+- **Versi Build Android (`v1.14.3`):**
+  - Menaikkan `versionCode = 20` (`versionName = "1.14.3"`) di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
+### 🐛 Diperbaiki (Bug Fixes)
+- **Tombol Hapus User Tidak Merespons & Error `column "created_by" does not exist`:**
+  - Mengganti `window.confirm()` (yang diblokir diam-diam oleh WebView Android) dengan `showConfirmModal()`, serta memperbarui `developer_delete_user()` menggunakan introspeksi dinamis `pg_constraint` untuk membersihkan seluruh *foreign key* secara aman sebelum menghapus dari `profiles` dan `auth.users`.
+- **Daftar Akun Kosong `(0)` di Menu Kelola User:**
+  - Menambahkan RPC `developer_list_users()` (`SECURITY DEFINER`) yang melakukan *join* antara `public.profiles` dan `auth.users` agar seluruh akun selalu terbaca tanpa terhalang RLS maupun error kolom `email` yang tidak ada di `profiles`.
+- **Grafik Donat Cash RT Hilang & Tooltip Menutupi Total Tengah:**
+  - Menambahkan deklarasi `const s = getGlobalSummary()` di dalam blok `donutCanvas` pada `initCharts()` sehingga grafik donat tidak lagi gagal dirender, dan menempatkan *tooltip* di tepi luar irisan (`wkOuter`) agar tidak menimpa angka total di tengah.
+- **Duplikasi Baris Pemasukan & Ketidaklengkapan Laporan Share PNG/PDF:**
+  - Menghapus baris duplikat `s.otherIncome` pada **Laporan Keuangan 1 Bulan** & PDF, serta menyertakan seluruh kategori pemasukan (`allIncomeByCat`) dan **Daftar KK Belum Lunas** secara penuh ke ekspor multi-PNG dan PDF.
+- **Kontras Mode Gelap (Latar `Data Kartu Keluarga Baru`, Textarea NawakAI, & Lencana `Meninggal Dunia`):**
+  - Memperbaiki aturan CSS `html.wk-dark [class*="bg-blue-50"]`, menimpa `background: transparent !important` pada `#nawakInput`, menyamakan lebar kolom titik dan centang `Selesai` (`w-4 h-4`), serta menambahkan kelas `.wk-badge-deceased` agar lencana *Meninggal Dunia* kontras di mode Terang maupun Gelap.
+
+### 🗄️ Skema Database
+- Menambahkan `supabase/005_developer_user_management.sql` (`custom_permissions` pada `public.profiles` + 4 RPC khusus Developer: `developer_list_users`, `developer_create_user`, `developer_update_user`, `developer_delete_user`).
+
+---
 
 ## [v1.14.2] - 2026-11-20
 
-### Ditambahkan
-- **Tampilan Chat NawakAI 100% Bergaya Gemini:**
-  - Palet warna adaptif Tema Terang & Gelap (OLED `#000000`, *bubble* user `#28292c`, kapsul input `#1e1f20`), teks balasan tanpa kotak pembatas, dan kontras langkah proses selesai (redup) vs langkah aktif (terang).
-  - Header modal menampilkan ikon resmi **Wajik NawakAI + teks `NawakAI RT 17`** tepat di tengah header dengan warna yang otomatis menyesuaikan tema Terang maupun Gelap.
-  - Loader animasi wajah NawakAI (hanya mata berkedip + senyum putih) pada bagian `Sedang berpikir`, garis vertikal `1px`, dan ikon centang **`Selesai`** yang sejajar presisi dalam kolom tetap `16px`.
-- **Input Multi-Baris, Minimize Bubble & Preview Lampiran ala Gemini:**
-  - Kotak ketik `<textarea>` transparan yang tumbuh otomatis ke atas dengan *placeholder* berbahasa Jawa (**`Takok opo wae nang NawakAI...`**) di mana tombol `Enter` membuat baris baru tanpa langsung mengirim.
-  - Pesan user panjang (>4 baris atau >110 karakter) otomatis diringkas dengan tombol buka/tutup (`▾/▴`).
-  - Tombol lampiran **`+`** ala Gemini yang menampilkan pratinjau thumbnail gambar atau kartu dokumen lengkap dengan tombol silang **`✕`** langsung di bagian dalam atas kotak input.
-- **Dukungan Lampiran Semua Jenis File & Input Database Otomatis:**
-  - Menghapus batasan format dan hak akses pada tombol `+` sehingga semua pengguna dapat melampirkan **PNG, JPG, WEBP, PDF (multi-halaman hingga 10 halaman + fallback OCR), Excel/CSV/ODS (membaca seluruh sheet), Word (`.docx` via Mammoth.js & `.doc`), serta file teks/data (`TXT`, `MD`, `JSON`, `XML`, `LOG`)**.
-  - NawakAI menyajikan data terstruktur, merangkum, dan menyimpulkan isi file secara detail, serta otomatis memunculkan tombol konfirmasi **`Jalankan Import Sekarang`** (anti-duplikat) jika file mengandung data warga/KK dan akun memiliki izin pengurus (`Developer`, `Pak RT`, `Wakil RT`).
-
-### Diperbarui
-- **Sinkronisasi Salam Masuk Sesuai Jam WIB Malang & Pengingat Berkala:**
-  - Mengunci perhitungan jam ke zona waktu **WIB (`Asia/Jakarta`)** wilayah Malang dan menyinkronkan teks *bubble* dengan isi tepat dari 3 audio sapaan ElevenLabs (**04.00–10.59 WIB** *Sugeng enjang* / `welcome_pagi`, **11.00–16.59 WIB** *Sugeng siang* / `welcome_siang`, **17.00–03.59 WIB** *Sugeng dalu* / `welcome_malam`).
-  - Saat pertama kali masuk aplikasi, NawakAI kini **selalu** mengucapkan salam sesuai waktu, sedangkan pengingat **Agenda Penting RT** & **Ulang Tahun Kepala Keluarga** dipindahkan ke pengecekan berkala di dalam aplikasi (maksimal 1 kali per hari).
-- **Grafik Donat Pemasukan Mencakup Seluruh Kategori Tambahan:**
-  - Memperbarui `getGlobalSummary()` (`allIncomeByCat`), legenda **Cash RT**, grafik donat `cashDonutChart`, serta **Laporan Keuangan 1 Bulan** (PNG/PDF) agar seluruh pemasukan berstatus *Approved* di luar iuran KK (seperti *Sumbangan / Donasi Warga* atau pemasukan lainnya dari `+ Catat Kas`) ikut tampil dengan warna dan persentase masing-masing serta total yang cocok dengan kartu **Pemasukan**.
-- **Aturan Suara & Jeda Popup Tips Tab (Data Warga, Data KK & Cash RT):**
-  - Suara tips pada tab **Data Warga** kini hanya berbunyi maksimal **1× dalam 24 jam**.
-  - Tab **Data KK** dan **Cash RT** dibuat **diam (tanpa suara)** dan hanya menampilkan popup teks.
-  - Menambahkan jeda global minimal **2 jam** antar popup tips dan **6 jam** per tab agar tidak mengganggu aktivitas pengguna.
-- **Pembaruan Versi Build Android (`v1.14.2`):**
-  - Menaikkan `versionCode = 19` (`versionName = "1.14.2"`) di `android/app/build.gradle.kts`, memperbarui `APP_VERSION` di `index.html` & `assets/wargakita.html`, serta menyesuaikan `.github/workflows/build-apk.yml`, `README.md`, dan `CHANGELOG.md`.
-
-### Diperbaiki
-- **Latar Belakang Textarea Input NawakAI di Mode Gelap:**
-  - Menimpa aturan global `html.wk-dark textarea` agar latar belakang `#nawakInput` transparan penuh dan menyatu rapi di dalam kapsul `#1e1f20`.
-- **Perataan Ikon Centang `Selesai` pada Timeline Proses:**
-  - Menyamakan lebar wadah titik langkah dan ikon centang `Selesai` (`w-4 h-4`) agar lurus sejajar secara vertikal.
-- **Deklarasi Variabel `s` pada `initCharts()` (`cashDonutChart`):**
-  - Menambahkan `const s = getGlobalSummary()` di dalam blok `donutCanvas` agar grafik donat selalu tergambar meskipun kanvas grafik batang Dashboard tidak sedang aktif.
+### ✨ Ditambahkan & Diperbarui
+- **Integrasi Awal Tampilan Chat NawakAI Bergaya Gemini:** Struktur modal chat gelap OLED/terang adaptif, *bubble* user, loader wajah mata+senyum, dan input multi-baris.
+- **Build Android (`v1.14.2`):** `versionCode = 19`, `versionName = "1.14.2"`.
 
 ---
 
 ## [v1.14.1] - 2026-11-20
 
-### Ditambahkan
-- **7 Audio Suara ElevenLabs MP3 Tertanam (*Offline*):**
-  - Menanamkan 7 file MP3 ElevenLabs berbahasa Jawa-Malangan langsung ke `NAWAK_AUDIO` (`welcome_pagi`, `welcome_siang`, `welcome_malam`, `pending`, `party`, `tips`, `update`) lengkap dengan `mediaPlaybackRequiresUserGesture = false` di `MainActivity.kt`.
-- **6 Ekspresi Lucu & Dinamis Maskot NawakAI (`getNawakSvg`):**
-  - Maskot Wajik Biru otomatis berganti ekspresi sesuai momen: **Welcome Ceria** (`welcome`), **Lagi Mikir** (`thinking`), **Selesai & Bangga** (`proud`), **Kaget Pending Approval** (`shocked` + lencana `!`), **Pesta Ultah & Agenda** (`party` + topi pesta & konfeti), dan **Siaga Update** (`update` + panah `↑`).
-- **Efek Suara Unik per Notifikasi (*Web Audio Synthesizer*) & Sakelar Speaker (`🔊/🔇`):**
-  - Nada sintesis ringan yang berbeda di setiap kejadian beserta tombol mute/unmute di header NawakAI.
-- **Grafik Donat *Soft-Track* + Badge Persentase Mengambang, 3 Bahasa, Material You & Paginasi 10 Item:**
-  - Menambahkan grafik donat proporsi kategori dengan *badge* persentase mengambang, pemilih **3 bahasa** (`Indonesia`, `English`, `Basa Jawa`), palet dinamis **Material You** Android (`AndroidBridge.getDevicePaletteJson`), serta paginasi 10 item (`Prev / Next`) pada **Riwayat Transaksi Detail** dan **Riwayat Aktivitas Akun**.
-- **Pembacaan Dokumen Lokal Tanpa Kuota API (`Tesseract.js` + `PDF.js`) & *Fuzzy Compare* KK:**
-  - Fallback OCR lokal resolusi tinggi dan pencocokan *fuzzy* (`compareRowsWithWargaKITA`) anti-duplikat terhadap database WargaKITA.
-- **Memori & Riwayat Percakapan Per Akun (`wk_nawak_history_*` & `wk_nawak_memory_*`) & Akses Mutasi Terkonfirmasi:**
-  - Riwayat chat tersimpan per pengguna, dukungan akses mutasi database penuh (pelunasan KK, approval massal, hapus warga) khusus **Developer Admin**, **Pak RT**, dan **Wakil RT** dengan tombol konfirmasi wajib.
-- **Mode Wajib Update + Pengecekan Latar Belakang 2 Jam (`UpdateCheckReceiver.kt`) + Notifikasi HP Android:**
-  - Pengecekan rilis GitHub otomatis di latar belakang dan modal **Wajib Update** lengkap dengan rincian *changelog* terbaru.
+### ✨ Ditambahkan & Diperbarui
+- **7 Audio Suara ElevenLabs MP3 Tertanam (*Offline*)** & sakelar **Speaker On/Mute (`🔊/🔇`)**.
+- **6 Ekspresi Dinamis Maskot NawakAI (`getNawakSvg`)** & efek suara *Web Audio Synth*.
+- **Grafik Donat *Soft-Track* + Badge `%` Mengambang**, pemilih **3 Bahasa (`id`/`en`/`jv`)**, palet dinamis **Material You** Android, dan **Paginasi 10 Item** pada riwayat transaksi & aktivitas.
+- **Pembacaan Dokumen Lokal Tanpa Kuota (`Tesseract.js` + `PDF.js`)**, *fuzzy compare* anti-duplikat KK, memori percakapan per akun, dan mode **Wajib Update** + pengecekan latar belakang 2 jam (`UpdateCheckReceiver.kt`).
 
-### Diperbarui
-- **Akses Database Penuh Tanpa Batas 15 KK (`buildNawakContext`)** dan sinkronisasi *real-time* Supabase sebelum menjawab.
-- **Versi Build Android (`v1.14.1`):** `versionCode = 18`, `versionName = "1.14.1"`.
-
-### Diperbaiki
-- **Responsif Terhadap Keyboard Android di Semua Layar:** `adjustResize`, `WindowInsets.Type.ime()`, `--vvh`, dan `scrollIntoView`.
-- **Perbaikan Fungsi Notifikasi Update (`sendAndroidNotification`)** dan penghapusan pesan error kuota API mentah.
+### 🐛 Diperbaiki
+- **Responsif Keyboard Android:** `adjustResize`, `WindowInsets.Type.ime()`, `--vvh`, `scrollIntoView`, dan penghapusan pesan error teknis kuota API.
 
 ---
 
 ## [v1.14.0] - 2026-11-20
 
-### Ditambahkan
-- **Asisten Pintar NawakAI (Gemini AI + Supabase Edge Function `nawak-ai`):**
-  - Integrasi penuh dengan Supabase Edge Function `nawak-ai` menggunakan native `Deno.serve` dan mekanisme *fallback* model berantai (`gemini-3.8-flash` → `gemini-flash-latest` → `gemini-3-flash-preview`) serta `thinkingConfig: { thinkingBudget: 0 }` untuk respons cepat.
-- **Ikon Melayang Wajik Biru Interaktif (*Draggable*) & Gelembung Sapaan Mengikuti Posisi:**
-  - Maskot **NawakAI** bergaya Flat UI (`#1d4ed8` dan `#60a5fa`) dengan posisi tersimpan otomatis di `localStorage` (`wk_nawak_pos`).
-- **Import File Data Warga via NawakAI & Export Data Warga 4 Format Lengkap (`PNG`, `Excel`, `Word`, `PDF`).**
-- **Notifikasi HP Berkala (Pending Approval 1 Jam Sekali + Agenda & Ultah).**
-- **Kartu Edit Profil Pengguna (Flat UI), Akses Login Khusus 4 Bendahara RT, & Desain Baru Kartu Ucapan Ulang Tahun (3 Tema Flat UI).**
-
-### Diperbaiki
-- **Sinkronisasi Edit Alamat Warga ke Data KK**, perbaikan tombol Edit Profil / Ubah Password / Reset Bulanan, ikon logo Base64, ikon mata coret login, anti *ghost-click* `320ms`, dan *silent local fallback*.
+### ✨ Ditambahkan & Diperbaiki
+- **Asisten Pintar NawakAI** via Supabase Edge Function `nawak-ai` + *draggable floating button* + *export* data warga 4 format (**PNG, Excel, Word, PDF**).
+- **Notifikasi HP Berkala** (Pending Approval 1 jam sekali, Agenda H-3..H-0, Ulang Tahun), **Kartu Edit Profil**, akses terkunci **4 Bendahara Khusus**, desain **Kartu Ucapan Ulang Tahun 3 Tema**, serta sinkronisasi edit alamat ke `households`.
 
 ---
 
-## [v1.13.3] - 2026-11-19
-
-### Diperbaiki
-- **Ikon Klip Bukti Transaksi**, penghapusan kilatan latar putih mode gelap, dan pembatasan lebar pop-up Detail Transaksi.
-
----
-
-## [v1.13.2] - 2026-11-19
-
-### Diperbarui
-- **Desain Ikon Vektor Flat UI Penuh**, ikon aplikasi presisi & *full-bleed* (`mdpi`–`xxxhdpi`), perbaikan kalender, penghapusan garis scrollbar, dan jarak aman *status bar* HP.
-
----
-
-## [v1.13.1] - 2026-11-19
-
-### Ditambahkan & Diperbaiki
-- **Kalender Ulang Tahun Warga Permanen**, tombol **Telepon & WhatsApp Kepala Keluarga** di Detail KK, warna tab filter status warga, dan ikon mata login tercentang.
-
----
-
-## [v1.13.0] - 2026-11-18
-
-### Ditambahkan
-- **Fondasi Aplikasi Android & Web WargaKITA (Flat UI + Supabase):** Dashboard KPI, Grafik Pemasukan 6 Bulan, Kalender Agenda Resmi RT, Data Warga & KK, Catat Iuran (QRIS / Transfer / Tunai), Cash RT (*Pending Approval* + Bukti Storage), Laporan Keuangan 1 Bulan (PNG/PDF), Rekap Kas Tahunan, Import/Export Excel, dan GitHub Actions APK Release.
+## [v1.13.0 – v1.13.3] - 2026-11-18 s.d. 2026-11-19
+- Fondasi **WargaKITA Flat UI + Supabase**, ikon vektor penuh, *full-bleed launcher icon*, kalender ulang tahun warga permanen, tombol telepon & WhatsApp di Detail KK, perbaikan *status bar padding*, dan perbaikan tampilan pop-up Detail Transaksi.
