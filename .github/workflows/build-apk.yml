@@ -17,16 +17,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Ekstrak Paket Android
+      - name: Siapkan Sumber Android
         run: |
           rm -rf extracted_repo
-          unzip -q WargaKITA_GitHub_Backup.zip -d extracted_repo
-          cat << 'EOF' > extracted_repo/android/gradle.properties
+          if [ -f "WargaKITA_GitHub_Backup_v1.14.4.zip" ]; then
+            unzip -q WargaKITA_GitHub_Backup_v1.14.4.zip -d extracted_repo
+          elif [ -f "WargaKITA_GitHub_Backup.zip" ]; then
+            unzip -q WargaKITA_GitHub_Backup.zip -d extracted_repo
+          else
+            mkdir -p extracted_repo
+            cp -r android extracted_repo/android
+          fi
+          cat << 'PROPS' > extracted_repo/android/gradle.properties
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           android.useAndroidX=true
           android.enableJetifier=true
           kotlin.code.style=official
-          EOF
+          PROPS
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -56,22 +63,36 @@ jobs:
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.14.3.apk
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.14.4.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.14.3.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.14.4.apk
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.14.3-apk
-          path: WargaKITA-RT17-v1.14.3.apk
+          name: WargaKITA-v1.14.4-apk
+          path: WargaKITA-RT17-v1.14.4.apk
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.14.3' }}
-          name: WargaKITA RT 17 (v1.14.3)
-          files: WargaKITA-RT17-v1.14.3.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.14.4' }}
+          name: WargaKITA RT 17 (v1.14.4)
+          files: WargaKITA-RT17-v1.14.4.apk
           make_latest: true
+          body: |
+            ## Pembaruan WargaKITA v1.14.4 (versionCode 21)
+            ### Fitur Baru
+            - **Checkbox Kolom & Export PNG Multi-Halaman (NawakAI):** Pilih kolom tertentu sebelum export, serta pemecahan PNG otomatis maks. 28 baris/halaman agar tetap tajam dan terbaca.
+            - **Auto-Simpan Storage HP & Share Instan:** Hasil export otomatis tersimpan ke `Download/WargaKITA` atau `Pictures/WargaKITA` lalu langsung memunculkan menu Share Android.
+            - **QRIS Khusus per Akun Petugas:** Tiap akun Bendahara menampilkan dan menyimpan QRIS atas namanya sendiri.
+            - **Kalender Auto-Remove (+2 Menit) & Sinkron Kalender HP:** Agenda kadaluarsa terhapus otomatis (+2 menit) di aplikasi, database, dan Kalender HP (`CalendarContract`), sekaligus menyinkronkan agenda & ultah warga.
+            - **Validasi Wajib Bukti Pembayaran:** Simpan Pembayaran mewajibkan lampiran foto bukti pembayaran warga.
+            - **Dukungan Android Lawas (`minSdk = 23`):** Bisa diinstal mulai Android 6.0 Marshmallow ke atas dengan akselerasi hardware WebView.
+            - **Hak Akses Approval Wakil RT 17:** Sinkron dengan RLS `006_wakil_rt_approval_rls.sql`.
+            ### Perbaikan & Peningkatan
+            - Animasi loader mata & mulut NawakAI lebih ekspresif tanpa border melingkar, respon lokal jauh lebih cepat, serta akurasi pencocokan kata lebih tepat.
+            - Desain ulang Flat UI kartu **Notifikasi & Persetujuan** serta lencana **Pending Approval** (kontras di Dark & Light mode).
+            - Perbaikan layar berkedip saat mencari di **Data Warga** & **Data KK**, reminder ultah tepat 2x (H-1 & 1 jam sebelum hari H), serta sinkronisasi status **Pindah Domisili** Kepala Keluarga ke seluruh anggota.
