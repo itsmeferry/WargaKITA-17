@@ -1,3 +1,13 @@
+## [1.15.2] — 2026-11-23
+
+### Perbaikan Crash Saat Install Ulang & Peningkatan Export
+- **Perbaikan Crash Startup (`MainActivity.kt`):** Memindahkan pemanggilan `requestInitialPermissions()` ke setelah inisialisasi `webView` serta menambahkan pengaman `evalJsSafe()` (`::webView.isInitialized`) pada seluruh *callback* izin kalender dan `SpeechRecognizer` agar aplikasi tidak pernah mengalami `UninitializedPropertyAccessException` saat baru diinstal ulang.
+- **Export Word `.docx` Asli:** Mengganti format `.doc` HTML dengan generator `.docx` OOXML asli (`buildValidDocxBytes`) agar terbuka mulus di Word, Google Docs, dan WPS Office Android.
+- **Filter Status Warga & Pemisahan Warga Kontrak:** Menambahkan filter status (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*) pada menu export NawakAI serta memisahkan **Warga Kontrak** ke bagian paling bawah tabel di semua format (**PNG, Excel, `.docx`, PDF**).
+- **Footer PDF Serasi PNG:** Menyamakan footer laporan **PDF** dengan desain **7 kartu KPI berwarna + kotak kesimpulan** milik **PNG**.
+- **Kerapian Agenda Resmi RT:** Menambahkan `whitespace-pre-line` pada daftar nama ronda dan menyembunyikan tombol `Edit`/`Hapus` untuk jadwal ronda bawaan Desember 2026.
+- **Build Android (`v1.15.2`):** Menaikkan `versionCode = 24`, `versionName = "1.15.2"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.15.1] — 2026-11-23
 
 ### NawakAI Voice Inline ala Gemini & Tombol Henti Paksa (`□`)
