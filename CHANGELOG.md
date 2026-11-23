@@ -1,3 +1,15 @@
+## [1.15.1] — 2026-11-23
+
+### NawakAI Voice Inline ala Gemini & Tombol Henti Paksa (`□`)
+- **Inline `SpeechRecognizer` + Live Waveform 14 Bar (`MainActivity.kt` & `index.html`):** Mengganti popup sistem Google dengan pengenalan suara *in-app* senyap yang mengalirkan level audio (*RMS*) secara langsung ke 14 bar *waveform* ala Gemini di dalam kapsul *chatbox*, lengkap dengan transkrip *real-time* dan eksekusi perintah otomatis.
+- **Tombol Henti Paksa (`□`):** Menambahkan tombol kotak `□` dengan `AbortController` dan pembatalan run aktif (`activeNawakRunId`) di seluruh perintah NawakAI agar pengguna dapat menghentikan paksa proses yang sedang berjalan kapan saja.
+
+### Jadwal Ronda Desember 2026 & Sinkronisasi Kalender HP Otomatis
+- **Jadwal Ronda 1–31 Desember 2026 (`RONDA_DES_2026`):** Memasukkan rolling 7 Regu + 2 personel Kost per malam lengkap dengan daftar nama warga ke Kalender Dashboard & NawakAI.
+- **Notifikasi Harian Jam 19:00 WIB (`RondaReminderReceiver.kt`):** Mengirim pengingat otomatis ke HP Pak RT / Wakil RT / Developer setiap pukul 19:00 WIB selama Desember 2026 dan memasang alarm kalender HP 210 menit sebelum ronda dimulai.
+- **Sinkronisasi Otomatis & Auto-Hapus Selesai Event (`04:00 WIB`):** Menghapus tombol manual `Simpan ke HP`, menyinkronkan kalender HP otomatis saat install, update APK, dan refresh data, serta menghapus otomatis jadwal yang sudah selesai (`DTEND <= nowMs`).
+- **Build Android (`v1.15.1`):** Menaikkan `versionCode = 23`, `versionName = "1.15.1"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.15.0] — 2026-11-23
 
 ### NawakAI Agent AI (UI Baru, Voice Command & 24 Skill)
