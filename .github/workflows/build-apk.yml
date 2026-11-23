@@ -20,13 +20,15 @@ jobs:
       - name: Siapkan Sumber Android
         run: |
           rm -rf extracted_repo
-          if [ -f "WargaKITA_GitHub_Backup_v1.15.0.zip" ]; then
-            unzip -q WargaKITA_GitHub_Backup_v1.15.0.zip -d extracted_repo
-          elif [ -f "WargaKITA_GitHub_Backup.zip" ]; then
-            unzip -q WargaKITA_GitHub_Backup.zip -d extracted_repo
-          else
+          LATEST_ZIP=$(ls -t WargaKITA_GitHub_Backup*.zip 2>/dev/null | head -n1 || true)
+          if [ -f "android/app/build.gradle.kts" ]; then
             mkdir -p extracted_repo
             cp -r android extracted_repo/android
+          elif [ -n "$LATEST_ZIP" ] && [ -f "$LATEST_ZIP" ]; then
+            unzip -oq "$LATEST_ZIP" -d extracted_repo
+          else
+            echo "Folder android/ atau file WargaKITA_GitHub_Backup*.zip tidak ditemukan."
+            exit 1
           fi
           cat << 'PROPS' > extracted_repo/android/gradle.properties
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
@@ -56,12 +58,16 @@ jobs:
         env:
           WK_KEYSTORE_B64: ${{ secrets.WK_KEYSTORE_BASE64 }}
           WK_KEYSTORE_PASS: ${{ secrets.WK_KEYSTORE_PASS }}
-          WK_KEYSTORE_ALIAS: ${{ secrets.WK_KEYSTORE_ALIAS }}
-          WK_KEYSTORE_PASS_ENV: ${{ secrets.WK_KEYSTORE_PASS }}
+          WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS || secrets.WK_KEYSTORE_ALIAS }}
+          WK_KEY_PASS: ${{ secrets.WK_KEY_PASS || secrets.WK_KEYSTORE_PASS }}
         run: |
           if [ -n "$WK_KEYSTORE_B64" ]; then
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
+            if [ -z "$WK_KEY_ALIAS" ]; then
+              WK_KEY_ALIAS=$(keytool -list -keystore release.keystore -storepass "$WK_KEYSTORE_PASS" 2>/dev/null | grep -i "Alias name:" | head -n1 | sed 's/.*Alias name:[[:space:]]*//I' | tr -d '\r' || true)
+              export WK_KEY_ALIAS
+            fi
             gradle assembleRelease --no-daemon
             cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.15.0.apk
           else
@@ -84,10 +90,10 @@ jobs:
           make_latest: true
           body: |
             ## Pembaruan WargaKITA v1.15.0 (versionCode 22)
-            ### NawakAI Agent AI & UI Baru
-            - **Popup Ala Messenger + Chatbox Gemini (Flat UI):** Animasi *spring* GPU 60fps bebas kedip, ikon wajik NawakAI 6 ekspresi dinamis di puncak kartu, layar Beranda grid 2×2, dan grid pilihan kolom export 2 kolom yang rapi.
-            - **Voice Command Native Android & Web (`id-ID`):** Dukungan input suara langsung (`RecognizerIntent` di Android + `SpeechRecognition` Web) lengkap dengan animasi *equalizer* datar.
-            - **24 Skill Agentic di 6 Domain:** Memori revisi *multi-turn*, audit klasifikasi & kebersihan data NIK/HP, catat pembayaran via suara/chat, proyeksi kas (*what-if*), audit transaksi *pending*, generator pengumuman WA detail (Laporan Kas, Acara, Tahlil, Berita Duka, Kerja Bakti), draf Surat Pengantar RT 17, pengingat WA santun, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
-            ### Perbaikan Klasifikasi & Iuran Tahunan
-            - **Kepala Keluarga Efektif:** Otomatis memprioritaskan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga bila Kepala Keluarga berstatus *Meninggal Dunia*.
-            - **Deduplikasi Tagihan Tahunan:** 1 tahun hanya menghitung maksimal 1 tagihan per kategori, dan badge tunggakan hanya muncul untuk piutang lintas tahun (`>= 2` tahun).
+            ### NawakAI Agent AI & Voice Command
+            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
+            - **Voice Command Native Android & Web (`id-ID`):** Mendukung perintah suara langsung lewat `RecognizerIntent` (`startVoiceInput()`) di Android dengan animasi equalizer datar.
+            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
+            ### Perbaikan Data & Iuran Tahunan RT 17
+            - **Kepala Keluarga Efektif (Data Janda):** Otomatis menampilkan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila kepala keluarga meninggal dunia.
+            - **Deduplikasi Tagihan Tahunan:** 1 tahun kalender dihitung maksimal 1 tagihan per kategori dan badge Tunggakan hanya tampil untuk piutang lintas tahun (`2025 & 2026`).
