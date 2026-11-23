@@ -1,3 +1,13 @@
+## [1.15.3] — 2026-11-24
+
+### Tema Perangkat Menyeluruh (Full Material You Dynamic Palette)
+- **Palet Warna Perangkat Menyeluruh (`MainActivity.kt` & `index.html`):** Mengambil token warna dinamis Material You Android 12+ secara lengkap (`bgApp`, `bgCard`, `bgSurface`, `border`, `accent`, `accentText`, `accentSoft`, `accentSoftText`, `muted`) dan menerapkannya ke seluruh elemen aplikasi (latar belakang, kartu, `.flat-card-sm`, navigasi bawah, kolom input, *filter pills*, badge, NawakAI popup, tombol FAB, hingga seluruh ikon SVG) dengan spesifisitas CSS penuh (`html.wk-dyn` & `html.wk-dark.wk-dyn`).
+
+### Perbaikan Export, Agenda Ronda & Workflow Rilis
+- **Perbaikan Export Word (`.docx` OOXML Asli):** Mengganti format `.doc` HTML dengan generator `.docx` murni (`buildValidDocxBytes`) agar bebas error *file rusak* di Word/Docs Android.
+- **Filter Status Warga & Pemisahan Warga Kontrak:** Menambahkan centang filter status warga (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*) di menu Export NawakAI, memisahkan **Warga Kontrak** ke bagian paling bawah tabel di semua format export, serta menyelaraskan footer **PDF** dengan tata letak 7 kartu KPI milik **PNG**.
+- **Perbaikan Bug Versi Kembali ke `v1.15.1`:** Memperbaiki seleksi ZIP pada `.github/workflows/build-apk.yml` dari `ls -t` (yang terpengaruh waktu checkout git) ke pencocokan versi eksplisit + `sort -V | tail -n1`, dan menaikkan versi ke **`v1.15.3` (`versionCode = 25`)**.
+
 ## [1.15.2] — 2026-11-23
 
 ### Perbaikan Login, Crash Startup & Peningkatan Export
