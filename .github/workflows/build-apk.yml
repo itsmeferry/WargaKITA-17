@@ -90,10 +90,8 @@ jobs:
           make_latest: true
           body: |
             ## Pembaruan WargaKITA v1.15.2 (versionCode 24)
-            ### NawakAI Agent AI & Voice Command
-            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
-            - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), dilengkapi tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
-            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
-            ### Perbaikan Data & Iuran Tahunan RT 17
-            - **Kepala Keluarga Efektif (Data Janda):** Otomatis menampilkan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila kepala keluarga meninggal dunia.
-            - **Deduplikasi Tagihan Tahunan:** 1 tahun kalender dihitung maksimal 1 tagihan per kategori dan badge Tunggakan hanya tampil untuk piutang lintas tahun (`2025 & 2026`).
+            ### Export Data Warga & Perapian Agenda
+            - **Export Word `.docx` OOXML Valid:** File Word kini langsung terbuka mulus di Microsoft Word, Google Docs, maupun WPS Office Android.
+            - **Filter Status Warga & Pemisahan Kontrak:** Tambahan filter status (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*) dan pemisahan otomatis **Warga Kontrak** di bagian bawah tabel.
+            - **Footer PDF 7 Kartu KPI:** Tata letak footer PDF kini serasi dengan hasil export PNG.
+            - **Agenda Ronda Dashboard Rapi:** Daftar nama petugas ronda tersusun per baris dan otomatis hilang setelah pukul 04:00 WIB.
