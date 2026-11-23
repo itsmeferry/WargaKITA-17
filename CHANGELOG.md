@@ -1,3 +1,18 @@
+## [1.15.0] — 2026-11-23
+
+### NawakAI Agent AI (UI Baru, Voice Command & 24 Skill)
+- **Antarmuka Popup Messenger + Chatbox Gemini (Flat UI):**
+  - Popup mengambang dengan animasi *spring* GPU 60fps bebas kedip, ikon wajik NawakAI 6 ekspresi dinamis di puncak kartu, layar Beranda grid 2×2 (*Ringkasan Kas*, *Cek Tunggakan*, *Data Janda*, *Export Warga*), dan grid kolom export 2 kolom yang rapi.
+- **Voice Command Native Android & Web (`id-ID`):**
+  - Menambahkan `RecognizerIntent` (`startVoiceInput()`) serta `onPermissionRequest` di `MainActivity.kt` dan izin `RECORD_AUDIO` di `AndroidManifest.xml`, dilengkapi animasi *equalizer* datar saat mendengarkan perintah suara.
+- **24 Skill Agentic di 6 Domain Operasional:**
+  - *Multi-turn working memory* (revisi draft otomatis), audit klasifikasi KK & kebersihan data NIK/HP, catat pembayaran via suara/chat, simulasi proyeksi saldo kas (*what-if*), audit transaksi *pending*, generator draft pengumuman WA detail (Laporan Kas lengkap Pemasukan & Pengeluaran, Acara, Tahlil Rutinan, Berita Duka/Lelayu, Kerja Bakti), pembuat draf Surat Pengantar RT 17 otomatis, pengingat WA personal santun, jadwal ronda, tambah agenda kalender, log aduan warga, dan paket laporan rapat RT.
+
+### Perbaikan Klasifikasi Janda, Iuran Tahunan & Tunggakan
+- **Kepala Keluarga Efektif (`getEffectiveHeadMember`):** Otomatis memprioritaskan nama **Istri aktif** di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila Kepala Keluarga sebelumnya berstatus *Meninggal Dunia*.
+- **Deduplikasi Tagihan Tahunan:** Memastikan 1 tahun kalender hanya menghitung maksimal 1 tagihan per kategori dan badge **Tunggakan** hanya tampil untuk piutang lintas tahun (`>= 2` tahun berbeda seperti `2025 & 2026`).
+- **Build Android (`v1.15.0`):** Menaikkan `versionCode = 22`, `versionName = "1.15.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.14.4] — 2026-11-22
 
 ### ✨ Ditambahkan (New Features)
