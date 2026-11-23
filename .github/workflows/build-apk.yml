@@ -20,8 +20,8 @@ jobs:
       - name: Siapkan Sumber Android
         run: |
           rm -rf extracted_repo
-          if [ -f "WargaKITA_GitHub_Backup_v1.14.4.zip" ]; then
-            unzip -q WargaKITA_GitHub_Backup_v1.14.4.zip -d extracted_repo
+          if [ -f "WargaKITA_GitHub_Backup_v1.15.0.zip" ]; then
+            unzip -q WargaKITA_GitHub_Backup_v1.15.0.zip -d extracted_repo
           elif [ -f "WargaKITA_GitHub_Backup.zip" ]; then
             unzip -q WargaKITA_GitHub_Backup.zip -d extracted_repo
           else
@@ -56,43 +56,38 @@ jobs:
         env:
           WK_KEYSTORE_B64: ${{ secrets.WK_KEYSTORE_BASE64 }}
           WK_KEYSTORE_PASS: ${{ secrets.WK_KEYSTORE_PASS }}
-          WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS }}
-          WK_KEY_PASS: ${{ secrets.WK_KEY_PASS }}
+          WK_KEYSTORE_ALIAS: ${{ secrets.WK_KEYSTORE_ALIAS }}
+          WK_KEYSTORE_PASS_ENV: ${{ secrets.WK_KEYSTORE_PASS }}
         run: |
           if [ -n "$WK_KEYSTORE_B64" ]; then
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.14.4.apk
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.15.0.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.14.4.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.15.0.apk
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.14.4-apk
-          path: WargaKITA-RT17-v1.14.4.apk
+          name: WargaKITA-v1.15.0-apk
+          path: WargaKITA-RT17-v1.15.0.apk
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.14.4' }}
-          name: WargaKITA RT 17 (v1.14.4)
-          files: WargaKITA-RT17-v1.14.4.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.15.0' }}
+          name: WargaKITA RT 17 (v1.15.0)
+          files: WargaKITA-RT17-v1.15.0.apk
           make_latest: true
           body: |
-            ## Pembaruan WargaKITA v1.14.4 (versionCode 21)
-            ### Fitur Baru
-            - **Checkbox Kolom & Export PNG Multi-Halaman (NawakAI):** Pilih kolom tertentu sebelum export, serta pemecahan PNG otomatis maks. 28 baris/halaman agar tetap tajam dan terbaca.
-            - **Auto-Simpan Storage HP & Share Instan:** Hasil export otomatis tersimpan ke `Download/WargaKITA` atau `Pictures/WargaKITA` lalu langsung memunculkan menu Share Android.
-            - **QRIS Khusus per Akun Petugas:** Tiap akun Bendahara menampilkan dan menyimpan QRIS atas namanya sendiri.
-            - **Kalender Auto-Remove (+2 Menit) & Sinkron Kalender HP:** Agenda kadaluarsa terhapus otomatis (+2 menit) di aplikasi, database, dan Kalender HP (`CalendarContract`), sekaligus menyinkronkan agenda & ultah warga.
-            - **Validasi Wajib Bukti Pembayaran:** Simpan Pembayaran mewajibkan lampiran foto bukti pembayaran warga.
-            - **Dukungan Android Lawas (`minSdk = 23`):** Bisa diinstal mulai Android 6.0 Marshmallow ke atas dengan akselerasi hardware WebView.
-            - **Hak Akses Approval Wakil RT 17:** Sinkron dengan RLS `006_wakil_rt_approval_rls.sql`.
-            ### Perbaikan & Peningkatan
-            - Animasi loader mata & mulut NawakAI lebih ekspresif tanpa border melingkar, respon lokal jauh lebih cepat, serta akurasi pencocokan kata lebih tepat.
-            - Desain ulang Flat UI kartu **Notifikasi & Persetujuan** serta lencana **Pending Approval** (kontras di Dark & Light mode).
-            - Perbaikan layar berkedip saat mencari di **Data Warga** & **Data KK**, reminder ultah tepat 2x (H-1 & 1 jam sebelum hari H), serta sinkronisasi status **Pindah Domisili** Kepala Keluarga ke seluruh anggota.
+            ## Pembaruan WargaKITA v1.15.0 (versionCode 22)
+            ### NawakAI Agent AI & UI Baru
+            - **Popup Ala Messenger + Chatbox Gemini (Flat UI):** Animasi *spring* GPU 60fps bebas kedip, ikon wajik NawakAI 6 ekspresi dinamis di puncak kartu, layar Beranda grid 2×2, dan grid pilihan kolom export 2 kolom yang rapi.
+            - **Voice Command Native Android & Web (`id-ID`):** Dukungan input suara langsung (`RecognizerIntent` di Android + `SpeechRecognition` Web) lengkap dengan animasi *equalizer* datar.
+            - **24 Skill Agentic di 6 Domain:** Memori revisi *multi-turn*, audit klasifikasi & kebersihan data NIK/HP, catat pembayaran via suara/chat, proyeksi kas (*what-if*), audit transaksi *pending*, generator pengumuman WA detail (Laporan Kas, Acara, Tahlil, Berita Duka, Kerja Bakti), draf Surat Pengantar RT 17, pengingat WA santun, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
+            ### Perbaikan Klasifikasi & Iuran Tahunan
+            - **Kepala Keluarga Efektif:** Otomatis memprioritaskan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga bila Kepala Keluarga berstatus *Meninggal Dunia*.
+            - **Deduplikasi Tagihan Tahunan:** 1 tahun hanya menghitung maksimal 1 tagihan per kategori, dan badge tunggakan hanya muncul untuk piutang lintas tahun (`>= 2` tahun).
