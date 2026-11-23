@@ -1,6 +1,7 @@
 ## [1.15.2] — 2026-11-23
 
-### Perbaikan Crash Saat Install Ulang & Peningkatan Export
+### Perbaikan Login, Crash Startup & Peningkatan Export
+- **Perbaikan Login (`ev is not defined`):** Memperbaiki kondisi render tombol `+ Kegiatan` pada header Kalender Kegiatan yang sebelumnya ikut memakai variabel loop `ev._isRonda`, sehingga login dan render Dashboard berjalan lancar tanpa error.
 - **Perbaikan Crash Startup (`MainActivity.kt`):** Memindahkan pemanggilan `requestInitialPermissions()` ke setelah inisialisasi `webView` serta menambahkan pengaman `evalJsSafe()` (`::webView.isInitialized`) pada seluruh *callback* izin kalender dan `SpeechRecognizer` agar aplikasi tidak pernah mengalami `UninitializedPropertyAccessException` saat baru diinstal ulang.
 - **Export Word `.docx` Asli:** Mengganti format `.doc` HTML dengan generator `.docx` OOXML asli (`buildValidDocxBytes`) agar terbuka mulus di Word, Google Docs, dan WPS Office Android.
 - **Filter Status Warga & Pemisahan Warga Kontrak:** Menambahkan filter status (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*) pada menu export NawakAI serta memisahkan **Warga Kontrak** ke bagian paling bawah tabel di semua format (**PNG, Excel, `.docx`, PDF**).
