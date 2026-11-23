@@ -58,42 +58,42 @@ jobs:
         env:
           WK_KEYSTORE_B64: ${{ secrets.WK_KEYSTORE_BASE64 }}
           WK_KEYSTORE_PASS: ${{ secrets.WK_KEYSTORE_PASS }}
-          WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS || secrets.WK_KEYSTORE_ALIAS }}
+          WK_KEYSTORE_ALIAS: ${{ secrets.WK_KEYSTORE_ALIAS || secrets.WK_KEYSTORE_ALIAS }}
           WK_KEY_PASS: ${{ secrets.WK_KEY_PASS || secrets.WK_KEYSTORE_PASS }}
         run: |
           if [ -n "$WK_KEYSTORE_B64" ]; then
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
-            if [ -z "$WK_KEY_ALIAS" ]; then
+            if [ -z "$WK_KEYSTORE_ALIAS" ]; then
               WK_KEY_ALIAS=$(keytool -list -keystore release.keystore -storepass "$WK_KEYSTORE_PASS" 2>/dev/null | grep -i "Alias name:" | head -n1 | sed 's/.*Alias name:[[:space:]]*//I' | tr -d '\r' || true)
               export WK_KEY_ALIAS
             fi
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.15.0.apk
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.15.1.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.15.0.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.15.1.apk
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.15.0-apk
-          path: WargaKITA-RT17-v1.15.0.apk
+          name: WargaKITA-v1.15.1-apk
+          path: WargaKITA-RT17-v1.15.1.apk
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.15.0' }}
-          name: WargaKITA RT 17 (v1.15.0)
-          files: WargaKITA-RT17-v1.15.0.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.15.1' }}
+          name: WargaKITA RT 17 (v1.15.1)
+          files: WargaKITA-RT17-v1.15.1.apk
           make_latest: true
           body: |
-            ## Pembaruan WargaKITA v1.15.0 (versionCode 22)
+            ## Pembaruan WargaKITA v1.15.1 (versionCode 23)
             ### NawakAI Agent AI & Voice Command
             - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
-            - **Voice Command Native Android & Web (`id-ID`):** Mendukung perintah suara langsung lewat `RecognizerIntent` (`startVoiceInput()`) di Android dengan animasi equalizer datar.
-            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
+            - **Voice Command Native Android & Web (`id-ID`):** Mendukung perintah suara langsung lewat `SpeechRecognizer` inline di Android dengan animasi waveform datar 14 bar ala Gemini serta tombol henti (`□`).
+            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda Desember 2026 + reminder 19:00 WIB, agenda kalender auto-sync, log aduan warga, dan paket laporan rapat RT.
             ### Perbaikan Data & Iuran Tahunan RT 17
             - **Kepala Keluarga Efektif (Data Janda):** Otomatis menampilkan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila kepala keluarga meninggal dunia.
             - **Deduplikasi Tagihan Tahunan:** 1 tahun kalender dihitung maksimal 1 tagihan per kategori dan badge Tunggakan hanya tampil untuk piutang lintas tahun (`2025 & 2026`).
