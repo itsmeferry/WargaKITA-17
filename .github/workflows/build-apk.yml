@@ -94,10 +94,9 @@ jobs:
           make_latest: true
           body: |
             ## Pembaruan WargaKITA v1.16.0 (versionCode 26)
-            ### NawakAI Agent AI & Voice Command
-            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
-            - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), Feedback Suara (TTS) toggle di header, Aksi Cepat navigasi 1 ketuk, tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
-            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
-            ### Optimasi Kesehatan Aplikasi & Export
-            - **Kesehatan Sistem & Auto-Reconnect:** In-flight lock anti request ganda, banner offline + auto-reconnect, kartu Kesehatan Sistem di tab Lainnya, serta tombol bersihkan cache lokal.
-            - **Export Multi-Format:** Word `.docx` OOXML asli, filter status warga, pemisahan Warga Kontrak di bagian paling bawah tabel, dan footer PDF 7 kartu KPI serasi PNG.
+            ### NawakAI Agent AI & NLU 5 Lapis
+            - **NLU 5 Lapis Anti-Typo & Slang:** Paham 150+ singkatan WA/Jawa-Malangan, koreksi typo Damerau-Levenshtein, input singkat 1–2 kata, dan tombol disambiguasi nama ganda.
+            - **Feedback Suara (TTS) & Aksi Cepat:** Toggle Speaker (🔊/🔇) di header NawakAI, Voice inline 14-bar waveform, tombol Henti Paksa (`□`), serta navigasi 1 ketuk dari chat.
+            ### Optimasi Performa & Kesehatan Aplikasi
+            - **Lazy-Load jsPDF/XLSX & Cache IndexedDB:** Waktu buka awal lebih cepat dan penyimpanan bukti/avatar bebas error kuota 5 MB.
+            - **Perbaikan Listener & Stabilitas:** Pembersihan listener drag `window`, pencarian Cash RT anti loncat scroll, In-Flight Lock, serta banner Offline Auto-Reconnect.
