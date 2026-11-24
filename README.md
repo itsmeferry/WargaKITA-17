@@ -1,6 +1,6 @@
 # WargaKITA — Aplikasi Administrasi & Keuangan RT 17 / RW 03 Kebonagung
 
-**WargaKITA** (`v1.16.0`) adalah aplikasi **Android & Web** bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
+**WargaKITA** (`v1.16.1`) adalah aplikasi **Android & Web** bergaya **Flat UI** untuk pengelolaan data kependudukan, iuran bulanan warga, kas RT, agenda kegiatan, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi secara *real-time* dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, dan Edge Functions).
 
 ---
 
@@ -168,20 +168,20 @@ Khusus akun `developer@wargakita.id`, tersedia **Panel Khusus Developer** berdes
 | **Bendahara RT** | `bendahara17@wargakita.id`, `novan@wargakita.id`, `ahmadabin@wargakita.id`, `teguh@wargakita.id`, `jodik@wargakita.id` | Ya | Tidak | Tidak | Ya (Pending Approval) | Tidak | Tidak | Ya | Tidak | Tidak |
 | **Sekretaris RT** | `sekretaris17@wargakita.id` | Ya | Ya | Tidak | Tidak | Tidak | Tidak | Ya | Tidak | Tidak |
 
-*(Catatan: Mulai `v1.16.0`, seluruh hak akses di atas dapat dikustomisasi per akun oleh **Developer Admin** melalui 10 centang `custom_permissions` di menu **Kelola User Login**).*
+*(Catatan: Mulai `v1.16.1`, seluruh hak akses di atas dapat dikustomisasi per akun oleh **Developer Admin** melalui 10 centang `custom_permissions` di menu **Kelola User Login**).*
 
 ### Arsitektur Teknis
 1. **Autentikasi & RLS:** Login melalui Supabase Auth (dilengkapi tombol mata intip sandi & wajib ganti sandi pada login awal) serta proteksi **Row Level Security (RLS)** di seluruh tabel PostgreSQL.
 2. **Penyimpanan Bukti Terstruktur:** Foto bukti diunggah ke Supabase Storage bucket `receipts` dengan jalur `TAHUN/BULAN/PEMASUKKAN|PENGELUARAN/`.
 3. **Asisten AI Hibrida:** Supabase Edge Function `nawak-ai` + *silent fallback* mesin lokal + OCR lokal (`Tesseract.js`, `PDF.js`, `Mammoth.js`, `SheetJS`) + 7 audio ElevenLabs MP3 *offline*.
-4. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 26`, `versionName = "1.16.0"`), menandatanganinya dengan *keystore* permanen dari GitHub Secrets, dan merilisnya ke **GitHub Releases**.
+4. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 27`, `versionName = "1.16.1"`), menandatanganinya dengan *keystore* permanen dari GitHub Secrets, dan merilisnya ke **GitHub Releases**.
 
 ---
 
 ## Riwayat Perubahan
 Lihat rincian lengkap pembaruan, peningkatan UI/UX, dan perbaikan bug per versi pada [CHANGELOG.md](CHANGELOG.md).
 
-### Pembaruan Utama v1.16.0 (NawakAI Agent AI & Iuran Tahunan RT 17)
+### Pembaruan Utama v1.16.1 (NawakAI Agent AI & Iuran Tahunan RT 17)
 - **NawakAI Agent AI (24 Skill di 6 Domain):**
   - *Tampilan Baru Flat UI*: Popup mengambang ala Messenger dengan ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, *chatbox* kapsul ala Gemini, animasi *spring* Android 60fps, dan *Voice Command* (*Speech-to-Text* `id-ID` native Android & Web).
   - *Kecerdasan Agen*: Memori revisi *multi-turn*, audit klasifikasi & kebersihan data NIK/KK, catat pembayaran via chat/suara, simulasi proyeksi kas (*what-if*), generator surat pengantar RT 17 otomatis, pengingat tagihan WA santun, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
@@ -190,8 +190,11 @@ Lihat rincian lengkap pembaruan, peningkatan UI/UX, dan perbaikan bug per versi 
   - **Point 2 (Janda):** Hanya wajib *Rukem + Juru Kunci* (`Rp 42.000/thn`), otomatis menampilkan nama istri aktif jika kepala keluarga meninggal dunia.
   - **Point 3 (Kost) & Point 4 (Nonaktif):** Bebas tagihan, dengan deduplikasi tagihan tahunan (`1 tahun = 1 tagihan`) serta pelacakan tunggakan lintas tahun (`2025 & 2026`).
 
-### Penyempurnaan v1.16.0 (Export Word `.docx`, Filter Status & Laporan PDF Serasi PNG)
+### Penyempurnaan v1.16.1 (Export Word `.docx`, Filter Status & Laporan PDF Serasi PNG)
 - **Export Word `.docx` Valid:** Format ekspor Word kini menghasilkan dokumen `.docx` OOXML murni (bebas error *file rusak* di Android Word/Docs/WPS).
 - **Filter Status Warga & Pemisahan Warga Kontrak:** Pilihan filter status (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*) langsung di menu export NawakAI, dengan **Warga Kontrak** dipisahkan khusus di bagian paling bawah tabel di semua format (PNG, Excel, Word, PDF).
 - **Footer PDF 7 Kartu KPI:** Tata letak ringkasan PDF disamakan dengan 7 kartu KPI berwarna + kotak kesimpulan milik export PNG.
 - **Tampilan Agenda Ronda Rapi:** Daftar anggota ronda tampil terstruktur per baris (`whitespace-pre-line`) tanpa tombol Edit/Hapus yang keliru pada jadwal bawaan.
+
+### Splash Screen Pembuka (`v1.16.1`)
+- **Mekar 3D (Radial Bloom — Fresh Light):** Tampilan pembuka 3,4 detik (pure CSS 3D + vanilla JS, 60fps *offline-ready*, terisolasi dengan prefix `.wk-sp-*` & `#wk-splash-screen`) menampilkan ikon resmi WargaKITA 17, 2 gelombang *pulse* flat, 6 chip fitur utama (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*), *wordmark* WargaKITA 17, *progress bar* flat, dukungan `prefers-reduced-motion`, serta pembersihan DOM otomatis (`window.wkHideSplash()`).

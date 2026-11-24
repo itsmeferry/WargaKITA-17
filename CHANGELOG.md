@@ -1,3 +1,11 @@
+## [1.16.1] — 2026-11-24
+
+### Splash Screen Pembuka — Mekar 3D (Radial Bloom · Fresh Light)
+- **Opening Splash Screen 3,4 Detik (`#wk-splash-screen`):** Menambahkan layar pembuka Flat UI berlatar `#F8FBFF` (100% pure CSS 3D + vanilla JS, *offline-ready* 60fps di Android WebView, terisolasi penuh dari `html.wk-dyn` dan `html.wk-dark`).
+- **Ikon & 6 Chip Fitur Heksagon:** Menampilkan ikon resmi WargaKITA 17 (`104×104px`, `border-radius: 28px`, tanpa bingkai putih) dengan animasi `rotateY(-135deg → 0deg)` + 2 gelombang *pulse* flat (`#E2F1FD` & `#D8F5EA`), diikuti 6 chip fitur utama (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*) yang mekar membentuk heksagon 3D.
+- **Wordmark, Loader & Pembersihan Memori:** Menampilkan *wordmark* `WargaKITA` + badge `17`, subjudul `RT 17 / RW 03 · Kebonagung`, *progress bar* flat `#0A58ED`, dukungan `prefers-reduced-motion`, helper `window.wkHideSplash()`, serta *fade-out* halus 0,5 detik yang langsung menghapus elemen splash dari DOM.
+- **Build Android (`v1.16.1`):** Menaikkan `versionCode = 27`, `versionName = "1.16.1"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.16.0] — 2026-11-24
 
 ### NawakAI Agent AI Penuh (P1, P2 & P3 Seutuhnya)
