@@ -93,13 +93,9 @@ jobs:
           files: WargaKITA-RT17-v1.16.1.apk
           make_latest: true
           body: |
-            ## Pembaruan WargaKITA v1.16.1 (versionCode 27)
-            ### Splash Screen Pembuka — Mekar 3D (Fresh Light)
-            - **Opening Splash Screen (3,4 detik):** Animasi 3D `rotateY` ikon resmi WargaKITA 17 (104×104px, tanpa bingkai putih) dengan 2 gelombang *pulse* flat dan 6 chip fitur utama heksagon (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*), *wordmark* WargaKITA 17, *progress bar* flat, dukungan `prefers-reduced-motion`, dan auto-hapus dari DOM (`window.wkHideSplash()`).
-            ### NawakAI Agent AI & Voice Command
-            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
-            - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), dilengkapi tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
-            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
-            ### Perbaikan Data & Iuran Tahunan RT 17
-            - **Kepala Keluarga Efektif (Data Janda):** Otomatis menampilkan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila kepala keluarga meninggal dunia.
-            - **Deduplikasi Tagihan Tahunan:** 1 tahun kalender dihitung maksimal 1 tagihan per kategori dan badge Tunggakan hanya tampil untuk piutang lintas tahun (`2025 & 2026`).
+            ## Pembaruan WargaKITA v1.16.1 (versionCode 28)
+            ### Splash Screen Pembuka Final — Fondasi Kebersamaan (Fresh Light)
+            - **Opening Splash Screen (3,4 detik):** Konsep *Isometric Lift & Grow Bloom* (Fresh Light `#F8FBFF`) dengan ikon hidup 4 lapisan WebP transparan (*hand, center, left, right*) tanpa border/kotak, 2 gelombang *pulse* flat (`#E2F1FD` & `#D8F5EA`), 6 chip fitur utama heksagonal (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga* — tanpa Ronda), *wordmark* `WargaKITA 17`, *progress bar* `#0A58ED` (*"Guyup rukun melayani warga..."*), dukungan `prefers-reduced-motion`, isolasi `html.wk-dyn` & `html.wk-dark`, serta pembersihan DOM otomatis (`window.wkHideSplash()`).
+            ### Dipertahankan Utuh dari Checkpoint v1.16.0 (versionCode 26)
+            - **NawakAI Agent AI (P1–P3) & NLU 5 Lapis:** Memori multi-turn, *tool chaining*, *batch approval*, briefing harian, OCR nota, dan koreksi typo *Damerau-Levenshtein*.
+            - **Paket B, Material You, OOXML `.docx` & Ronda Desember 2026:** *In-flight lock*, *offline auto-reconnect*, *System Health*, TTS, IndexedDB cache, tema dinamis, export `.docx`, serta reminder ronda harian 19:00 WIB.
