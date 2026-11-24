@@ -1,3 +1,15 @@
+## [1.16.0] — 2026-11-24
+
+### Paket B: Optimasi Kesehatan Aplikasi + Feedback Suara & Aksi Cepat NawakAI
+- **Optimasi Kesehatan Aplikasi:**
+  - *In-Flight Lock* (`__wkLoadInFlight`) pada `loadAllData()` untuk mencegah permintaan ganda ke Supabase saat refresh cepat.
+  - Banner deteksi *Offline* & *Auto-Reconnect* otomatis menyinkronkan data begitu koneksi kembali aktif.
+  - Kartu **Kesehatan Sistem WargaKITA** di tab **Lainnya** (khusus Developer / Pak RT / Wakil RT) menampilkan status koneksi, jumlah KK/Warga/Agenda termuat, status Voice TTS, serta tombol **Bersihkan Cache Lokal & Segarkan**.
+- **Feedback Suara (TTS) & Aksi Cepat NawakAI:**
+  - Tombol toggle **Speaker (🔊 / 🔇)** di header popup NawakAI untuk membacakan jawaban otomatis dalam bahasa Indonesia (`AndroidBridge.speakJavanese` / Web Speech API), berhenti instan saat tombol Henti (`□`) atau tutup ditekan.
+  - **Aksi Cepat (*Quick Action Navigation*)**: Perintah suara/teks (*"Buka Cash RT"*, *"Buka Data KK"*, *"Buka Kalender"*) langsung menampilkan tombol navigasi 1 ketuk ke halaman terkait.
+- **Build Android (`v1.16.0`):** Menaikkan `versionCode = 26`, `versionName = "1.16.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.15.3] — 2026-11-24
 
 ### Tema Perangkat Menyeluruh (Full Material You Dynamic Palette)
