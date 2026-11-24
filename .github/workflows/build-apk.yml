@@ -20,8 +20,8 @@ jobs:
       - name: Siapkan Sumber Android
         run: |
           rm -rf extracted_repo
-          if [ -f "WargaKITA_GitHub_Backup_v1.16.0.zip" ]; then
-            LATEST_ZIP="WargaKITA_GitHub_Backup_v1.16.0.zip"
+          if [ -f "WargaKITA_GitHub_Backup_v1.16.1.zip" ]; then
+            LATEST_ZIP="WargaKITA_GitHub_Backup_v1.16.1.zip"
           else
             LATEST_ZIP=$(ls -1 WargaKITA_GitHub_Backup*.zip 2>/dev/null | sort -V | tail -n1 || true)
           fi
@@ -73,27 +73,29 @@ jobs:
               export WK_KEY_ALIAS
             fi
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.16.0.apk
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.16.1.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.16.0.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.16.1.apk
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.16.0-apk
-          path: WargaKITA-RT17-v1.16.0.apk
+          name: WargaKITA-v1.16.1-apk
+          path: WargaKITA-RT17-v1.16.1.apk
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.16.0' }}
-          name: WargaKITA RT 17 (v1.16.0)
-          files: WargaKITA-RT17-v1.16.0.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.16.1' }}
+          name: WargaKITA RT 17 (v1.16.1)
+          files: WargaKITA-RT17-v1.16.1.apk
           make_latest: true
           body: |
-            ## Pembaruan WargaKITA v1.16.0 (versionCode 26)
+            ## Pembaruan WargaKITA v1.16.1 (versionCode 27)
+            ### Splash Screen Pembuka — Mekar 3D (Fresh Light)
+            - **Opening Splash Screen (3,4 detik):** Animasi 3D `rotateY` ikon resmi WargaKITA 17 (104×104px, tanpa bingkai putih) dengan 2 gelombang *pulse* flat dan 6 chip fitur utama heksagon (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*), *wordmark* WargaKITA 17, *progress bar* flat, dukungan `prefers-reduced-motion`, dan auto-hapus dari DOM (`window.wkHideSplash()`).
             ### NawakAI Agent AI & Voice Command
             - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
             - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), dilengkapi tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
