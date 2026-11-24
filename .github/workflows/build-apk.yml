@@ -94,10 +94,7 @@ jobs:
           make_latest: true
           body: |
             ## Pembaruan WargaKITA v1.16.0 (versionCode 26)
-            ### NawakAI Agent AI & Voice Command
-            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
-            - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), dilengkapi tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
-            - **25 Skill Agentic (termasuk Rekap Pertumbuhan Kas Bulanan / MoM):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, perbandingan kas bulan ini vs bulan lalu, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
-            ### Optimasi Performa & Database
-            - **Lazy-load jsPDF/XLSX + IndexedDB Media Cache:** Startup aplikasi lebih ringan dan bebas error kuota penyimpanan bukti foto.
-            - **Migrasi Indeks Supabase (`008`):** Mempercepat query iuran, alokasi, kas, warga, dan audit log.
+            ### NawakAI Agent AI Penuh (P1, P2 & P3)
+            - **P1 (Otak Konteks & NLU 5 Lapis):** Kamus 150+ slang Jawa-Malangan, anti-typo Damerau-Levenshtein, resolusi kata ganti (*"alamatnya/tagihannya"*), 12 riwayat multi-turn ke Gemini, & slot-filling revisi draft otomatis.
+            - **P2 (Eksekusi Interaktif & Voice Inline):** Voice inline ala Gemini (14-bar waveform tanpa popup Google), tombol Henti Paksa (`□`), TTS speaker toggle, tool chaining multi-aksi, catat kas/iuran via suara, batch approval pending 1 ketuk, & export terfilter otomatis.
+            - **P3 (Proaktif, Audit & OCR):** Briefing Harian Cerdas RT 17, Audit Lengkap Kesehatan Data & Keuangan, OCR nota/struk belanja ke Kas RT, jadwal Ronda Desember 2026 auto-sync kalender HP + reminder 19:00 WIB, serta migrasi cache media ke IndexedDB.
