@@ -1,13 +1,10 @@
 ## [1.16.1] — 2026-11-24
 
-### Splash Screen Pembuka — Fondasi Kebersamaan (Isometric Lift & Grow Bloom)
-- **Animasi Pembuka 4 Lapisan WebP Transparan (3,4 Detik · Fresh Light `#F8FBFF`):**
-  - Tangan penyangga (`hand`) terangkat dari sudut 3D isometrik sebagai fondasi, diikuti 3 sosok warga (`center`, `left`, `right`) tumbuh berurutan ke atas tanpa border dan tanpa latar kotak (seluruh aset WebP tersemat sebagai *data URI* 100% *offline-ready*).
-  - **6 Chip Fitur Utama Heksagonal 3D (Tanpa Fitur Ronda):** *Kas RT* (`#0A58ED`), *Iuran* (`#10B981`), *NawakAI* (`#6366F1`), *Laporan* (`#F59E0B`), *Info RT* (`#14B8A6`), dan *Data Warga* (`#0EA5E9`) mekar serentak dari tengah ikon.
-  - **Wordmark & Loader Flat UI:** Menampilkan `WargaKITA` + badge `17`, subjudul `RT 17 / RW 03 · Kebonagung`, *progress bar* `#0A58ED`, dan teks *"Guyup rukun melayani warga..."*.
-  - **Isolasi & Kebersihan Memori:** Seluruh style memakai prefix `.wk-sp-*` dengan pengaman terhadap tema dinamis Material You (`html.wk-dyn`) dan mode gelap (`html.wk-dark`), dukungan `prefers-reduced-motion`, helper `window.wkHideSplash()`, serta *fade-out* `0.48s` yang memulihkan `overflow` dokumen dan menghapus `#wk-splash-screen` dari DOM.
-- **Keutuhan Fitur Checkpoint `v1.16.0`:** Seluruh fitur NawakAI Agent AI (P1–P3), NLU 5 Lapis, Paket B (*In-Flight Lock, Offline Auto-Reconnect, TTS, IndexedDB, Lazy-Load jsPDF/XLSX*), Material You, Export `.docx` OOXML, dan Ronda Desember 2026 dipertahankan utuh tanpa regresi.
-- **Build Android (`v1.16.1`):** Menaikkan `versionCode = 27`, `versionName = "1.16.1"` di `android/app/build.gradle.kts`, `APP_VERSION` di `index.html` & `android/app/src/main/assets/wargakita.html`, serta `.github/workflows/build-apk.yml`.
+### Splash Screen Pembuka — Mekar 3D (Radial Bloom · Fresh Light)
+- **Opening Splash Screen 3,4 Detik (`#wk-splash-screen`):** Menambahkan layar pembuka Flat UI berlatar `#F8FBFF` (100% pure CSS 3D + vanilla JS, *offline-ready* 60fps di Android WebView, terisolasi penuh dari `html.wk-dyn` dan `html.wk-dark`).
+- **Ikon & 6 Chip Fitur Heksagon:** Menampilkan ikon resmi WargaKITA 17 (`104×104px`, `border-radius: 28px`, tanpa bingkai putih) dengan animasi `rotateY(-135deg → 0deg)` + 2 gelombang *pulse* flat (`#E2F1FD` & `#D8F5EA`), diikuti 6 chip fitur utama (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*) yang mekar membentuk heksagon 3D.
+- **Wordmark, Loader & Pembersihan Memori:** Menampilkan *wordmark* `WargaKITA` + badge `17`, subjudul `RT 17 / RW 03 · Kebonagung`, *progress bar* flat `#0A58ED`, dukungan `prefers-reduced-motion`, helper `window.wkHideSplash()`, serta *fade-out* halus 0,5 detik yang langsung menghapus elemen splash dari DOM.
+- **Build Android (`v1.16.1`):** Menaikkan `versionCode = 27`, `versionName = "1.16.1"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
 
 ## [1.16.0] — 2026-11-24
 
