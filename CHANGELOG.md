@@ -1,5 +1,10 @@
 ## [1.16.0] — 2026-11-24
 
+### NawakAI Agent AI Penuh (P1, P2 & P3 Seutuhnya)
+- **P1 — Otak Konteks & Memori Multi-Turn:** Resolusi kata ganti otomatis (*"alamatnya"*, *"no hpnya"*, *"tagihannya"*), pengiriman 12 riwayat pesan + `agentContext` ke Gemini Edge Function, serta *slot-filling* revisi draft otomatis tanpa perlu mengulang perintah.
+- **P2 — Eksekusi Interaktif & Batch Action:** *Tool chaining* multi-aksi (*cek tunggakan + langsung buat draft WA*), catat pemasukan/pengeluaran kas & pembayaran iuran via suara/chat dengan *slot-filling* nominal/metode, *Batch Approval* semua transaksi pending 1 ketuk (`approve_all_pending`), serta *Smart Filtered Export* otomatis per status warga (*"Export warga janda ke PDF"*).
+- **P3 — Proaktif, Audit & OCR:** **Briefing Harian Cerdas RT 17** (*saldo, pending approval, jadwal ronda, ulang tahun, kebersihan NIK*), Audit Lengkap Kesehatan Data & Keuangan, serta OCR foto nota/struk belanja untuk langsung dicatat ke Kas RT.
+
 ### Paket B: Optimasi Kesehatan Aplikasi + Feedback Suara & Aksi Cepat NawakAI
 - **Optimasi Kesehatan Aplikasi:**
   - *In-Flight Lock* (`__wkLoadInFlight`) pada `loadAllData()` untuk mencegah permintaan ganda ke Supabase saat refresh cepat.
