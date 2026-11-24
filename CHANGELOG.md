@@ -1,10 +1,11 @@
-## [1.16.1] — 2026-11-24
+## [1.16.1] — 2026-11-24 (`versionCode = 28`)
 
-### Splash Screen Pembuka — Mekar 3D (Radial Bloom · Fresh Light)
-- **Opening Splash Screen 3,4 Detik (`#wk-splash-screen`):** Menambahkan layar pembuka Flat UI berlatar `#F8FBFF` (100% pure CSS 3D + vanilla JS, *offline-ready* 60fps di Android WebView, terisolasi penuh dari `html.wk-dyn` dan `html.wk-dark`).
-- **Ikon & 6 Chip Fitur Heksagon:** Menampilkan ikon resmi WargaKITA 17 (`104×104px`, `border-radius: 28px`, tanpa bingkai putih) dengan animasi `rotateY(-135deg → 0deg)` + 2 gelombang *pulse* flat (`#E2F1FD` & `#D8F5EA`), diikuti 6 chip fitur utama (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*) yang mekar membentuk heksagon 3D.
-- **Wordmark, Loader & Pembersihan Memori:** Menampilkan *wordmark* `WargaKITA` + badge `17`, subjudul `RT 17 / RW 03 · Kebonagung`, *progress bar* flat `#0A58ED`, dukungan `prefers-reduced-motion`, helper `window.wkHideSplash()`, serta *fade-out* halus 0,5 detik yang langsung menghapus elemen splash dari DOM.
-- **Build Android (`v1.16.1`):** Menaikkan `versionCode = 27`, `versionName = "1.16.1"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+### Splash Screen Pembuka Final — Fondasi Kebersamaan (Isometric Lift & Grow Bloom)
+- **Konsep & Tema Fresh Light (`#F8FBFF`):** Dibangun langsung di atas checkpoint stabil `v1.16.0` (`versionCode = 26`) tanpa mengubah atau mengurangi fitur yang sudah ada.
+- **Ikon Utama Hidup (4 Lapisan WebP Transparan Offline-Ready):** Tangan penyangga (`hand`) terangkat dari sudut 3D isometrik sebagai fondasi kokoh, diikuti 3 sosok warga (`center`, `left`, `right`) tumbuh berurutan ke atas tanpa border dan tanpa latar kotak.
+- **6 Chip Fitur Utama Heksagonal 3D (Tanpa Ronda):** *Kas RT* (`#0A58ED`), *Iuran* (`#10B981`), *NawakAI* (`#6366F1`), *Laporan* (`#F59E0B`), *Info RT* (`#14B8A6`), dan *Data Warga* (`#0EA5E9`), mekar serentak dari tengah ikon bersama 2 gelombang *pulse* flat (`#E2F1FD` & `#D8F5EA`).
+- **Wordmark, Loader & Pembersihan Memori:** Menampilkan `WargaKITA 17`, subjudul `RT 17 / RW 03 · Kebonagung`, serta progress bar `#0A58ED` dengan label *"Guyup rukun melayani warga..."*. Tampil tepat **3,4 detik (`3400ms`)**, diikuti *fade-out* halus (`0.48s`), pengembalian `overflow` dokumen, dan penghapusan elemen `#wk-splash-screen` dari DOM (`window.wkHideSplash()`).
+- **Isolasi Penuh & Aksesibilitas:** 100% pure CSS 3D + vanilla JS dengan prefix `.wk-sp-*`, pengaman spesifisitas terhadap tema Material You (`html.wk-dyn`) & mode gelap (`html.wk-dark`), serta dukungan `prefers-reduced-motion`.
 
 ## [1.16.0] — 2026-11-24
 
