@@ -57,7 +57,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Siapkan Keystore, Build & Verifikasi APK
+      - name: Siapkan Keystore & Build APK
         working-directory: extracted_repo/android
         env:
           WK_KEYSTORE_B64: ${{ secrets.WK_KEYSTORE_BASE64 }}
@@ -65,37 +65,19 @@ jobs:
           WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS || secrets.WK_KEYSTORE_ALIAS }}
           WK_KEY_PASS: ${{ secrets.WK_KEY_PASS || secrets.WK_KEYSTORE_PASS }}
         run: |
-          APKSIGNER="${ANDROID_HOME}/build-tools/35.0.0/apksigner"
-          ZIPALIGN="${ANDROID_HOME}/build-tools/35.0.0/zipalign"
-          OUT_APK="../../WargaKITA-RT17-v1.16.1.apk"
-
           if [ -n "$WK_KEYSTORE_B64" ]; then
-            printf '%s' "$WK_KEYSTORE_B64" | tr -d ' \n\r\t' | base64 -d > release.keystore
+            echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
             if [ -z "$WK_KEY_ALIAS" ]; then
               WK_KEY_ALIAS=$(keytool -list -keystore release.keystore -storepass "$WK_KEYSTORE_PASS" 2>/dev/null | grep -i "Alias name:" | head -n1 | sed 's/.*Alias name:[[:space:]]*//I' | tr -d '\r' || true)
               export WK_KEY_ALIAS
             fi
-            keytool -list -keystore release.keystore -storepass "$WK_KEYSTORE_PASS" -alias "$WK_KEY_ALIAS" >/dev/null
             gradle assembleRelease --no-daemon
-
-            if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-              cp app/build/outputs/apk/release/app-release.apk "$OUT_APK"
-            elif [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-              "$ZIPALIGN" -f -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app-release-aligned.apk
-              "$APKSIGNER" sign --ks release.keystore --ks-pass "env:WK_KEYSTORE_PASS" --ks-key-alias "$WK_KEY_ALIAS" --key-pass "env:WK_KEY_PASS" --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --out "$OUT_APK" app-release-aligned.apk
-            else
-              echo "APK release tidak ditemukan setelah gradle assembleRelease."
-              exit 1
-            fi
+            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.16.1.apk
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk "$OUT_APK"
+            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.16.1.apk
           fi
-
-          "$APKSIGNER" verify --verbose --print-certs "$OUT_APK"
-          ls -lh "$OUT_APK"
-          sha256sum "$OUT_APK"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -112,9 +94,12 @@ jobs:
           make_latest: true
           body: |
             ## Pembaruan WargaKITA v1.16.1 (versionCode 27)
-            ### Splash Screen Pembuka — Fondasi Kebersamaan (Isometric Lift & Grow Bloom)
-            - **Opening Splash Screen (3,4 detik · Fresh Light `#F8FBFF`):** Ikon hidup 4 lapisan WebP transparan tanpa border (`hand` terangkat isometrik + 3 sosok warga `center`, `left`, `right` tumbuh berurutan), 6 chip fitur utama heksagonal 3D (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga* — tanpa Ronda), *wordmark* WargaKITA 17, *progress bar* flat (*"Guyup rukun melayani warga..."*), isolasi penuh `.wk-sp-*`, dukungan `prefers-reduced-motion`, dan auto-hapus dari DOM (`window.wkHideSplash()`).
-            ### Fitur Checkpoint v1.16.0 (Tetap Utuh)
-            - **NawakAI Agent AI (P1–P3) & NLU 5 Lapis:** Memori multi-turn, 24 skill agentic, 150+ normalisasi slang/Malangan + Damerau-Levenshtein ≤ 2, Voice Command & TTS, serta Aksi Cepat.
-            - **Paket B & Material You:** In-flight lock, offline auto-reconnect, kartu Kesehatan Sistem, lazy-load jsPDF/XLSX, IndexedDB media cache, dan Full Material You Dynamic Palette.
-            - **Data Warga, Export `.docx` & Ronda Des 2026:** Export Word `.docx` OOXML murni, filter status warga, pemisahan Warga Kontrak di bagian bawah tabel, footer PDF 7 kartu KPI, dan jadwal Ronda Desember 2026.
+            ### Splash Screen Pembuka — Mekar 3D (Fresh Light)
+            - **Opening Splash Screen (3,4 detik):** Animasi 3D `rotateY` ikon resmi WargaKITA 17 (104×104px, tanpa bingkai putih) dengan 2 gelombang *pulse* flat dan 6 chip fitur utama heksagon (*Kas RT, Iuran, NawakAI, Laporan, Info RT, Data Warga*), *wordmark* WargaKITA 17, *progress bar* flat, dukungan `prefers-reduced-motion`, dan auto-hapus dari DOM (`window.wkHideSplash()`).
+            ### NawakAI Agent AI & Voice Command
+            - **UI Baru Flat UI (Popup Messenger + Chatbox Gemini):** Popup mengambang bebas kedip dengan animasi spring Android 60fps, ikon wajik 6 ekspresi NawakAI, layar Beranda grid 2×2, dan grid kolom export 2 kolom.
+            - **Voice Command Native Android & Web (`id-ID`):** Voice inline ala Gemini (`SpeechRecognizer` senyap + 14-bar live RMS waveform tanpa popup Google), dilengkapi tombol Henti Paksa (`□`), jadwal Ronda Desember 2026 lengkap dengan reminder harian 19:00 WIB ke Pak RT, serta sinkronisasi & auto-hapus kalender HP otomatis.
+            - **24 Skill Agentic (6 Domain):** Memori revisi multi-turn, audit klasifikasi & kebersihan data, catat pembayaran via chat/suara, simulasi proyeksi kas, generator pengumuman WA & surat pengantar RT 17 otomatis, jadwal ronda, agenda kalender, log aduan warga, dan paket laporan rapat RT.
+            ### Perbaikan Data & Iuran Tahunan RT 17
+            - **Kepala Keluarga Efektif (Data Janda):** Otomatis menampilkan nama istri aktif di Data KK, Detail KK, Cash RT, NawakAI, dan Export Warga apabila kepala keluarga meninggal dunia.
+            - **Deduplikasi Tagihan Tahunan:** 1 tahun kalender dihitung maksimal 1 tagihan per kategori dan badge Tunggakan hanya tampil untuk piutang lintas tahun (`2025 & 2026`).
