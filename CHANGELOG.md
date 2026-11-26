@@ -1,3 +1,37 @@
+## [1.17.0] — 2026-11-26 (`versionCode = 29`)
+
+### Desain Android 17 (Material 3 Expressive), Dark Mode & Navigasi Responsif
+- **Redesign Konsisten 5 Tab (*Dashboard, Data Warga, Data KK & Iuran, Cash RT, Lainnya*):** Mengusung bahasa visual **Material 3 Expressive** dengan sudut membulat modern (`rounded-2xl`/`rounded-3xl`), kartu tonal (`.m3-tonal-surface`, `.m3-hero-tonal`), tombol pill responsif di layar mobile (`<= 390px`), **Bottom Navigation Bar** mobile, dan **Desktop Navigation Rail** (`renderDesktopNavRail`) otomatis di layar lebar.
+- **Dark Mode Dinamis & 4 Palet Material You (`MATERIAL_PALETTES`):** Mode tampilan kini mendukung **Terang**, **Gelap**, dan **Otomatis Sistem** dipadukan dengan 4 pilihan palet warna dinamis (*Samudra RT 17*, *Zamrud Asri*, *Violet Senja*, dan *Koral Hangat*) yang langsung menyelaraskan variabel CSS, komponen antarmuka, dan warna grafik.
+- **Pembaruan Grafik Dashboard & Donat Cash RT:** Grafik batang pemasukan 6 bulan terakhir di **Dashboard** dan grafik donat distribusi kas masuk di **Cash RT** kini selaras otomatis dengan token warna (`chartColors`, `barMuted`, `barActive`) dari palet Material You yang sedang aktif.
+- **Perapihan Tab Data Warga, Data KK & Iuran, serta Lainnya:**
+  - **Data Warga:** Tombol sortir ringkas (*Urut KK & Tgl Lahir* vs *Urut Abjad A–Z*) dan filter status/agama yang bersih (*Permanen, Kontrak, Kost, Tidak Aktif di RT 17, Pindah Domisili, Meninggal Dunia*).
+  - **Data KK & Iuran:** Pembaruan header ringkas, bar progres kepatuhan, dan 4 kartu filter cepat (*Wajib Penuh, Janda Rukem, Kost Bebas, Menunggak*).
+  - **Lainnya & Laporan:** Tata letak pemilih mode Terang/Gelap/Otomatis, kartu pilih palet Material You 2 kolom, bahasa `ID / EN / JV`, dan kartu versi aplikasi yang bersih.
+
+### Aturan Iuran Tahunan, Cicilan Lintas Bulan & Tunggakan Manual Beda Tahun (`010_annual_dues_and_manual_arrears.sql`)
+- **Tagihan Tahunan Otomatis (`1×/Tahun per Kategori`):** Kewajiban 4 kategori iuran (*17 Agustus, Keuangan Social, Pembangunan + Fogging, Rukem + Juru Kunci*) dikonsolidasikan menjadi **1 tagihan resmi per tahun per kategori (`period_month = 1`)** via `ensure_period_dues()` & `getAnnualDuesForHouseholdYear()`.
+- **Cicilan Lintas Bulan & Rollover Lintas Tahun (`2026 → 2027`):** Warga dapat mencicil tagihan tahunan di bulan mana pun (misal bayar sebagian di November lalu melunasi sisanya di Desember, sisa tagihan dan nominal terbayar otomatis tersambung). Perpindahan bulan `‹` / `›` dari Desember ke Januari otomatis menaikkan/menurunkan `periodYear`, status kartu menampilkan `LUNAS <Tahun>` agar tidak rancu dengan piutang tahun lalu, dan pelunasan otomatis memotong tahun terlama lebih dulu (*FIFO*).
+- **Input Tunggakan Manual Beda Tahun (`showManualArrearsModal` & `upsert_manual_household_due`):** Petugas berwenang (Developer, Pak RT, Wakil RT, Bendahara RT) dapat mencatat, mengedit, atau menyesuaikan nominal tunggakan historis tahun-tahun sebelumnya (`>= 2020`) per kategori iuran langsung dari Detail KK.
+- **Rincian Piutang Terakumulasi & Pengingat WA:** Total tunggakan per KK kini menjabarkan rincian per tahun dan per kategori secara jelas (termasuk selisih kurang bayar cicilan) beserta tombol pengingat WhatsApp langsung.
+
+### Hierarki Urutan Anggota KK Baku & Keamanan View Database (`009_complaints_realtime_and_kk_ordering.sql`)
+- **Urutan Baku Anggota KK (`sortKKMembers`):** Seluruh tampilan anggota keluarga di Detail KK, Data Warga, NawakAI, dan seluruh format Export (**PDF, Excel, Word `.docx`, PNG**) diseragamkan mengikuti hierarki: `Kepala Keluarga → Istri/Suami → Anak → Menantu → Cucu → Orang Tua Laki-laki/Perempuan → Mertua → Famili Lain → Lainnya`, diurutkan dari tanggal lahir tertua ke termuda (dilengkapi fallback urutan NIK).
+- **Perapihan Database & Keamanan View (`security_invoker = true`):** Normalisasi variasi penulisan hubungan keluarga di `public.residents`, penambahan `public.v_residents_kk_ordered` dengan `security_invoker = true` agar mematuhi RLS (bebas temuan *Security Definer View* di Supabase Security Advisor), serta aktivasi Supabase Realtime untuk tabel inti.
+
+### Notifikasi Lingkungan Real-Time WebSocket & Kontrol Siaran Info Warga (`server.ts`)
+- **Server Real-Time WebSocket (`/ws` & `/api/notifications/*`):** Menambahkan server Node.js/Express + `ws` di `server.ts` yang menyiarkan pengumuman **Info Ronda, Kerja Bakti, Agenda Warga, Pembayaran Iuran, dan Pengumuman RT** secara langsung ke semua perangkat yang terhubung disertai indikator jumlah perangkat aktif (`Live WS • N aktif`).
+- **Pemisahan Notifikasi Info Warga vs Approval Kas:** Pusat Notifikasi memisahkan tab **Info Warga** (hanya info lingkungan yang relevan, tidak lagi tercampur spam *pending approval*) dengan tab **Approval Kas**.
+- **Pusat Siaran Info Terbaru (`showBroadcastCenterModal`) & Kartu Ulang Tahun Khusus:** Tombol **Siarkan Info Baru** beserta 4 kategori *template otomatis* yang dapat diedit sebelum dikirim, serta hak edit **Kartu Ucapan Ulang Tahun**, kini dibatasi khusus untuk **Developer, Pak RT, dan Wakil RT**.
+
+### Laporan Kas Bulanan & Per Petugas PDF Detail (`buildMonthlyCashOfficerReport`)
+- **Otomatis Sesuai Akun Bendahara Login:** Saat membuka **Laporan Kas Bulanan & Per Petugas**, cakupan petugas otomatis terpilih dan diarahkan sesuai akun yang sedang login (termasuk 4 Bendahara: *Novan Hermawan, Ahmad Abin, A. Teguh Purwanto, Jodik Purwanto*, serta Pak RT, Wakil RT, Sekretaris, dan Developer), serta menghapus teks label `"1x klik"` yang tidak perlu.
+- **Perbandingan Month-over-Month (MoM) & Rincian Warga Terbayar:** Menampilkan perbandingan pemasukan, pengeluaran, dan surplus bersih **Bulan Ini vs Bulan Sebelumnya**, lengkap dengan rekap per kategori dan daftar warga yang telah membayar per petugas dalam modal dan ekspor **PDF siap cetak**.
+
+### Panel Developer: 14 Hak Akses Granular & Sinkronisasi RLS
+- **Ekspansi Izin Granular (`PERM_DEFS` & `010`):** Menambah 4 izin baru di menu **Kelola User Login** sehingga menjadi **14 centang hak akses granular** (`canViewWarga`, `canAddWarga`, `canEditWarga`, `canDeleteWarga`, `canPay`, `canCash`, `canApprove`, `canEditOpening`, `canEditCalendar`, `canBroadcastInfo`, `canEditBirthdayCard`, `canManageManualArrears`, `canExportReports`, `canUnmaskNik`), tersinkronisasi penuh dengan fungsi `public.user_has_permission()` dan RLS PostgreSQL.
+- **Build Android (`v1.17.0`):** Menaikkan `versionCode = 29`, `versionName = "1.17.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
 ## [1.16.1] — 2026-11-24 (`versionCode = 28`)
 
 ### Splash Screen Pembuka Final — Fondasi Kebersamaan (Isometric Lift & Grow Bloom)
