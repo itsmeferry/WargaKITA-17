@@ -64,6 +64,12 @@ jobs:
           WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS || secrets.WK_KEYSTORE_ALIAS }}
           WK_KEY_PASS: ${{ secrets.WK_KEY_PASS || secrets.WK_KEYSTORE_PASS }}
         run: |
+          VER_NAME=$(grep -E 'versionName[[:space:]]*=' app/build.gradle.kts | head -n1 | sed -E 's/.*"(.*)".*/\1/' | tr -d '\r')
+          VER_CODE=$(grep -E 'versionCode[[:space:]]*=' app/build.gradle.kts | head -n1 | sed -E 's/.*=[[:space:]]*([0-9]+).*/\1/' | tr -d '\r')
+          APK_OUT="WargaKITA-RT17-v${VER_NAME}-VersionCode-${VER_CODE}.apk"
+          echo "VER_NAME=${VER_NAME}" >> "$GITHUB_ENV"
+          echo "VER_CODE=${VER_CODE}" >> "$GITHUB_ENV"
+          echo "APK_OUT=${APK_OUT}" >> "$GITHUB_ENV"
           if [ -n "$WK_KEYSTORE_B64" ]; then
             echo "$WK_KEYSTORE_B64" | base64 -d > release.keystore
             export WK_KEYSTORE_PATH="$(pwd)/release.keystore"
@@ -72,41 +78,39 @@ jobs:
               export WK_KEY_ALIAS
             fi
             gradle assembleRelease --no-daemon
-            cp app/build/outputs/apk/release/app-release.apk ../../WargaKITA-RT17-v1.17.0.apk
+            cp app/build/outputs/apk/release/app-release.apk "../../${APK_OUT}"
           else
             gradle assembleDebug --no-daemon
-            cp app/build/outputs/apk/debug/app-debug.apk ../../WargaKITA-RT17-v1.17.0.apk
+            cp app/build/outputs/apk/debug/app-debug.apk "../../${APK_OUT}"
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WargaKITA-v1.17.0-apk
-          path: WargaKITA-RT17-v1.17.0.apk
+          name: WargaKITA-v${{ env.VER_NAME }}-VersionCode-${{ env.VER_CODE }}-apk
+          path: ${{ env.APK_OUT }}
 
       - name: Publikasikan ke GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.17.0' }}
-          name: WargaKITA RT 17 (v1.17.0)
-          files: WargaKITA-RT17-v1.17.0.apk
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}', env.VER_NAME) }}
+          name: WargaKITA RT 17 (v${{ env.VER_NAME }})
+          files: ${{ env.APK_OUT }}
           make_latest: true
           body: |
-            ## Pembaruan WargaKITA v1.17.0 (versionCode 29)
+            ## WargaKITA RT 17 — v${{ env.VER_NAME }} (Version Code: ${{ env.VER_CODE }})
 
-            ### Desain Android 17 (Material 3 Expressive) & Dark Mode Dinamis
-            - **Konsisten di Seluruh 5 Tab:** Redesign Material 3 Expressive di *Dashboard, Data Warga, Data KK & Iuran, Cash RT, dan Lainnya*, lengkap dengan *Bottom Navigation Bar* mobile dan *Desktop Navigation Rail*.
-            - **4 Palet Warna Material You:** *Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat* + mode **Terang / Gelap / Otomatis Sistem** serta grafik batang Dashboard & donat Cash RT yang selaras otomatis dengan palet aktif.
+            ### Sub-APK Tersedia
+            - **WargaKITA RT-17 v${{ env.VER_NAME }} Version Code: ${{ env.VER_CODE }}** (`${{ env.APK_OUT }}`) — *Build Terbaru*
+            - **WargaKITA RT-17 v1.17.0 Version Code: 29** (`WargaKITA-RT17-v1.17.0.apk`) — *Rilis Awal v1.17.0*
 
-            ### Iuran Tahunan, Tunggakan Manual & Urutan KK Baku
-            - **Aturan Iuran Tahunan (`010`):** Konsolidasi 1 tagihan/tahun/kategori dengan cicilan lintas bulan, navigasi lintas tahun (`2026 ↔ 2027`), pelunasan otomatis FIFO tahun terlama, serta input/koreksi tunggakan manual tahun sebelumnya (`>= 2020`).
-            - **Urutan Anggota KK Baku (`009`):** Penyeragaman urutan anggota keluarga di Detail KK, Data Warga, NawakAI, & seluruh Export (`Kepala Keluarga → Istri/Suami → Anak → Menantu → Cucu → Orang Tua → Mertua → Famili Lain`).
+            ### Pembaruan Version Code ${{ env.VER_CODE }} (v${{ env.VER_NAME }})
+            - **Deteksi Update Sub-APK Multi-Build (`Version Code`):** Menampilkan `v1.17.0 (Version Code: 30)` di dalam aplikasi, mengarahkan seluruh versi terdahulu (`v1.15.x`, `v1.16.x`, maupun `v1.17.0` build sebelumnya) ke sub-APK dengan Version Code tertinggi, popup **"Apa yang Baru"** otomatis di Dashboard saat membuka aplikasi, serta notifikasi Android latar belakang setiap 30 menit bagi perangkat yang belum dibuka.
+            - **Anti Auto-Scroll ke Atas Saat Gulir ke Bawah:** Mempertahankan posisi gulir `#scrollArea` dan fokus input ketik saat sinkronisasi *real-time* berjalan di latar belakang.
+            - **Tombol Back Menutup Dropdown Terbuka Lebih Dulu:** Menekan tombol Back Android saat menu pilihan blur terbuka kini menutup dropdown tersebut tanpa berpindah ke menu/tab sebelumnya.
+            - **Warna Ikon Refresh/Reload Mengikuti Tema Aktif:** Indikator *pull-to-refresh* kini selaras otomatis dengan 4 palet Material You (*Samudra, Zamrud Asri, Violet Senja, Koral Hangat*) maupun Mode Gelap.
 
-            ### Notifikasi Real-Time WebSocket, Laporan Petugas & 14 Hak Akses
-            - **Siaran Info Warga Real-Time (`server.ts`):** Server WebSocket `/ws` menyiarkan Info Ronda, Kerja Bakti, Pengumuman RT & Agenda langsung ke semua perangkat, dengan kontrol khusus *Developer, Pak RT & Wakil RT* (termasuk edit Kartu Ucapan Ulang Tahun).
-            - **Laporan Kas Bulanan & Per Petugas PDF:** Otomatis memilih cakupan petugas sesuai akun login, perbandingan *Month-over-Month*, & rincian pembayar per petugas.
-            - **Panel Developer:** Ekspansi **14 centang hak akses granular** tersinkron hingga RLS database.
-            ### Pengunduh APK Dalam Aplikasi, Deteksi Build Ulang & Perbaikan Dropdown
-            - **Unduh & Pasang Update Langsung Di Dalam Aplikasi:** Progress bar persentase & MB real-time langsung di dialog update tanpa keluar ke browser eksternal, dilanjutkan pemasangan APK otomatis (`PackageInstaller`).
-            - **Deteksi Pembaruan Build Pada Versi Sama (`v1.17.0`):** `UpdateCheckReceiver` & `checkAppUpdate()` mendeteksi rilis APK terbaru berdasarkan stempel waktu kompilasi (`BUILD_EPOCH_MS`) dan notifikasi siaran real-time.
-            - **Pelindung Dropdown Anti-Salah Pencet Saat Scroll:** Mencegah seluruh dropdown terbuka tidak sengaja ketika pengguna menggulir halaman.
+            ### Fitur Utama v1.17.0
+            - **Desain Android 17 (Material 3 Expressive) & Dark Mode Dinamis:** Redesign 5 tab utama, *Desktop Navigation Rail*, dan 4 palet warna Material You.
+            - **Iuran Tahunan (`010`) & Urutan KK Baku (`009`):** Konsolidasi 1 tagihan/tahun/kategori, cicilan lintas bulan, rollover tahunan (`2026 ↔ 2027`), pelunasan FIFO, dan koreksi tunggakan manual tahun sebelumnya.
+            - **Notifikasi Real-Time WebSocket, Laporan Petugas & 14 Hak Akses:** Siaran Info Warga *real-time* `/ws`, kontrol siaran & kartu ulang tahun khusus pengurus inti, serta unduh & pasang APK langsung di dalam aplikasi.

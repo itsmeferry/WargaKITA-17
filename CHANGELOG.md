@@ -1,4 +1,4 @@
-## [1.17.0] — 2026-11-26 (`versionCode = 29`)
+## [1.17.0] — 2026-11-27 (`versionCode = 30`)
 
 ### Desain Android 17 (Material 3 Expressive), Dark Mode & Navigasi Responsif
 - **Redesign Konsisten 5 Tab (*Dashboard, Data Warga, Data KK & Iuran, Cash RT, Lainnya*):** Mengusung bahasa visual **Material 3 Expressive** dengan sudut membulat modern (`rounded-2xl`/`rounded-3xl`), kartu tonal (`.m3-tonal-surface`, `.m3-hero-tonal`), tombol pill responsif di layar mobile (`<= 390px`), **Bottom Navigation Bar** mobile, dan **Desktop Navigation Rail** (`renderDesktopNavRail`) otomatis di layar lebar.
@@ -31,12 +31,18 @@
 ### Panel Developer: 14 Hak Akses Granular & Sinkronisasi RLS
 - **Ekspansi Izin Granular (`PERM_DEFS` & `010`):** Menambah 4 izin baru di menu **Kelola User Login** sehingga menjadi **14 centang hak akses granular** (`canViewWarga`, `canAddWarga`, `canEditWarga`, `canDeleteWarga`, `canPay`, `canCash`, `canApprove`, `canEditOpening`, `canEditCalendar`, `canBroadcastInfo`, `canEditBirthdayCard`, `canManageManualArrears`, `canExportReports`, `canUnmaskNik`), tersinkronisasi penuh dengan fungsi `public.user_has_permission()` dan RLS PostgreSQL.
 
-### Pengunduh APK Dalam Aplikasi, Deteksi Build Ulang & Perbaikan Dropdown
-- **Unduh & Pasang Pembaruan Langsung di Dalam APK (`MainActivity.kt` & `AndroidManifest.xml`):** Mengganti pengalihan ke browser eksternal saat menekan **Unduh & Pasang Update** maupun tombol **Unduh APK Terbaru** dengan pengunduh native Android (`AndroidBridge.downloadAndInstallApk` + `REQUEST_INSTALL_PACKAGES` + `FileProvider`), lengkap dengan **progress bar persentase (`0%–100%`) dan ukuran MB real-time**, lalu otomatis memicu pemasang paket Android (`PackageInstaller`) begitu unduhan selesai.
-- **Deteksi Update & Notifikasi Otomatis pada Versi Sama (`v1.17.0`):** `UpdateCheckReceiver.kt` dan `checkAppUpdate()` kini membaca stempel waktu kompilasi (`BuildConfig.BUILD_EPOCH_MS` / `APP_BUILD_EPOCH`) terhadap stempel waktu aset APK terbaru di GitHub Releases (`updated_at`), serta menerima sinyal siaran pembaruan langsung (`isUpdateSignal`) sehingga build perbaikan terbaru pada versi `v1.17.0` tetap mengirim notifikasi update ke perangkat warga. Notifikasi update kini langsung membuka dialog pembaruan di dalam aplikasi alih-alih melempar ke browser.
-- **Pelindung Dropdown Anti-Salah Pencet Saat Scroll (`setupCustomSelectPickers` & `openBlurSelectPicker`):** Menghapus pemicu popup pada `touchstart`/`mousedown`, menambahkan ambang geser sentuhan (`> 8px`), jeda pendinginan pasca-gulir (`260ms`), dan pengaman sentuh ganda pada seluruh dropdown aplikasi agar tidak mudah terbuka tidak sengaja ketika pengguna sedang menggulir halaman.
-- **Pembaruan Dokumentasi & 49 Screenshot Terbaru (`README.md` & `docs/screenshots/`):** Menyusun ulang **Daftar Isi** terperinci per menu dan sub-menu beserta kegunaannya, memisahkan panduan lengkap **NawakAI** beserta hasil eksekusi perintah langsung, serta mengganti seluruh gambar dengan 49 tangkapan layar terbaru lintas 4 palet warna Material You & Dark Mode tanpa duplikat.
-- **Build Android (`v1.17.0`):** Mempertahankan `versionCode = 29`, `versionName = "1.17.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+### Pembaruan Sistem Update Sub-APK (`Version Code`), Popup Dashboard & Perbaikan UI (`versionCode = 30`)
+- **Identifikasi & Rilis Sub-APK Berbasis `Version Code` (`v1.17.0 (Version Code: 30)`):**
+  - Menampilkan badge lengkap **`v1.17.0 (Version Code: 30)`** di tab **Lainnya** dan dialog pembaruan aplikasi via `AndroidBridge.getVersionCode()` & `APP_VERSION_CODE`.
+  - GitHub Release `v1.17.0` kini mendukung multi aset sub-APK bernomor (`WargaKITA-RT17-v1.17.0-VersionCode-30.apk`, `VersionCode-31.apk`, dst.). `checkAppUpdate()` & `UpdateCheckReceiver.kt` memindai seluruh aset `.apk` dan otomatis memilih **Version Code tertinggi**, serta mengarahkan **semua versi lama** (`v1.15.x`, `v1.16.x`, maupun `v1.17.0` build awal) ke rilis terbaru.
+- **Popup Update Otomatis di Dashboard & Notifikasi Latar Belakang:**
+  - Saat petugas membuka aplikasi dan belum memakai build terbaru, popup **Pembaruan Aplikasi Tersedia** langsung tampil otomatis di **Dashboard** beserta daftar lengkap **"Apa yang Baru"**, progress bar unduhan native in-app, dan tombol **Unduh & Pasang Sekarang**.
+  - `UpdateCheckReceiver.kt` berjalan periodik tiap **30 menit** (termasuk pasca reboot & `MY_PACKAGE_REPLACED`) sehingga pengguna yang belum membuka aplikasi tetap menerima notifikasi Android saat ada pembaruan.
+- **Perbaikan 3 Bug Antarmuka Penting:**
+  - **Anti Auto-Scroll ke Atas Saat Gulir ke Bawah:** Mempertahankan `scrollTop` `#scrollArea` dan fokus ketik saat `render()` dipicu sinkronisasi latar belakang/Realtime, menunda *silent render* saat jari menyentuh layar, menambahkan `overscroll-behavior-y: contain`, serta membatasi auto-`scrollIntoView`.
+  - **Tombol Back Menutup Dropdown Terbuka Lebih Dulu:** Memperbarui `window.wkHandleBack()` agar tombol Back Android menutup `#wkBlurSelectOverlay`, `#wkConfirmOverlay`, `#qrisFullscreenOverlay`, popover lampiran NawakAI, dan modal aktif terlebih dahulu sebelum kembali ke menu/tab sebelumnya.
+  - **Warna Ikon Reload / Pull-to-Refresh Menyesuaikan Tema:** Menyelaraskan `.ptr-bar` dengan `var(--color-accent)` & `var(--md-on-primary)` di `applyMaterialPaletteCSS` untuk seluruh 4 palet Material You maupun Dark Mode.
+- **Build Android (`v1.17.0` / `versionCode = 30`):** Mempertahankan `versionName = "1.17.0"`, menaikkan `versionCode = 30` di `android/app/build.gradle.kts`, dan memperbarui `.github/workflows/build-apk.yml` untuk menghasilkan aset `WargaKITA-RT17-v1.17.0-VersionCode-30.apk`.
 
 ## [1.16.1] — 2026-11-24 (`versionCode = 28`)
 

@@ -55,7 +55,7 @@
       .app-shell:not(.mobile-mode) .fab-btn { bottom: 24px; right: 24px; }
       .app-shell:not(.mobile-mode) .nawak-float-btn { right: 24px; bottom: 84px; }
     }
-    .scroll-area { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 112px; touch-action: pan-y; scrollbar-width: none; -ms-overflow-style: none; }
+    .scroll-area { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding-bottom: 112px; touch-action: pan-y; scrollbar-width: none; -ms-overflow-style: none; }
     .scroll-area::-webkit-scrollbar { display: none; width: 0; height: 0; }
     * { scrollbar-width: none; -ms-overflow-style: none; }
     *::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -328,13 +328,13 @@
       width: 40px;
       height: 40px;
       border-radius: 999px;
-      background: #2563eb;
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+      background: var(--color-accent, #2563eb);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.22);
       transition: transform 180ms var(--motion-ease), opacity 180ms var(--motion-ease);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
+      color: var(--md-on-primary, #ffffff);
       pointer-events: none;
       opacity: 0;
     }
@@ -997,7 +997,8 @@ function saveProfileExtra(uid, obj) {
 }
 
 const APP_VERSION = "v1.17.0";
-const APP_BUILD_EPOCH = 1795740518516;
+const APP_VERSION_CODE = 30;
+const APP_BUILD_EPOCH = 1795778800000;
 const GITHUB_REPO_URL = "https://github.com/itsmeferry/WargaKITA-17";
 const GITHUB_RELEASE_URL = "https://github.com/itsmeferry/WargaKITA-17/releases/latest";
 const GITHUB_API_LATEST_URL = "https://api.github.com/repos/itsmeferry/WargaKITA-17/releases/latest";
@@ -1564,11 +1565,15 @@ function applyMaterialPaletteCSS(isDark) {
     }
     html .btn-accent, html.wk-dark .btn-accent,
     html .fab-btn, html.wk-dark .fab-btn,
+    html .ptr-bar, html.wk-dark .ptr-bar,
     html .bg-\\[\\#1d4ed8\\], html.wk-dark .bg-\\[\\#1d4ed8\\],
     html #nawakSendBtn, html.wk-dark #nawakSendBtn {
       background-color: ${tokens.accent} !important;
       border-color: ${tokens.accent} !important;
       color: ${tokens.onPrimary} !important;
+    }
+    html .ptr-bar, html.wk-dark .ptr-bar {
+      box-shadow: 0 6px 16px ${tokens.accent}55 !important;
     }
     html .bg-\\[\\#eff6ff\\], html.wk-dark .bg-\\[\\#eff6ff\\],
     html .bg-\\[\\#dbeafe\\], html.wk-dark .bg-\\[\\#dbeafe\\],
@@ -1700,6 +1705,7 @@ function openBlurSelectPicker(sel) {
 
   const openedAt = Date.now();
   window.__wkLastBlurSelectTs = openedAt;
+  try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (_) {}
 
   const ov = document.createElement("div");
   ov.id = "wkBlurSelectOverlay";
@@ -2666,7 +2672,14 @@ async function _loadAllDataCore(silent) {
     state.errorMsg = "Koneksi sedang lambat. Tarik ke bawah untuk segarkan.";
   } finally {
     state.loading = false;
-    render();
+    const scheduleSafeRender = () => {
+      if (window.__wkTouchActive) {
+        window.__wkPendingSilentRender = true;
+        return;
+      }
+      render();
+    };
+    scheduleSafeRender();
     cleanupExpiredEventsAndSyncCalendar();
     if (!state.updateCheckedOnce && state.session) {
       state.updateCheckedOnce = true;
@@ -3039,10 +3052,20 @@ function render() {
   applyTheme(state.themeMode, state.themePalette);
   const root = document.getElementById("screenRoot");
   if (!state.session || !state.profile) {
+    window.__wkLastRenderedView = "";
     root.innerHTML = renderLoginScreen();
     bindLoginEvents();
     return;
   }
+
+  const nextViewKey = `${state.activeTab}::${state.selectedHouseholdId || ""}`;
+  const sameView = window.__wkLastRenderedView === nextViewKey;
+  const prevScrollEl = document.getElementById("scrollArea");
+  const prevScrollTop = (sameView && prevScrollEl) ? prevScrollEl.scrollTop : 0;
+  const activeEl = document.activeElement;
+  const restoreFocusId = (sameView && activeEl && prevScrollEl && prevScrollEl.contains(activeEl) && activeEl.id && ["INPUT", "TEXTAREA"].includes(activeEl.tagName)) ? activeEl.id : "";
+  const restoreSelStart = (restoreFocusId && typeof activeEl.selectionStart === "number") ? activeEl.selectionStart : null;
+  const restoreSelEnd = (restoreFocusId && typeof activeEl.selectionEnd === "number") ? activeEl.selectionEnd : null;
 
   let bodyHtml = "";
   let fabHtml = "";
@@ -3075,7 +3098,7 @@ function render() {
     ${renderDesktopNavRail()}
     <div class="flex-1 flex flex-col min-w-0 min-h-0 relative overflow-hidden">
       <div id="ptrBar" class="ptr-bar no-print"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></div>
-      <div id="scrollArea" class="scroll-area fade-in">
+      <div id="scrollArea" class="scroll-area${sameView ? '' : ' fade-in'}">
         ${state.errorMsg ? `<div class="m-3 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs no-print">${state.errorMsg}</div>` : ""}
         ${state.loading ? `<div class="m-3 p-2.5 rounded-2xl m3-hero-tonal text-xs font-medium no-print">Memuat data terbaru...</div>` : ""}
         ${bodyHtml}
@@ -3100,7 +3123,30 @@ function render() {
       ${renderBottomNav()}
     </div>
   `;
+  window.__wkLastRenderedView = nextViewKey;
   bindScreenEvents();
+  if (sameView) {
+    const newScrollEl = document.getElementById("scrollArea");
+    if (newScrollEl && prevScrollTop > 0) {
+      newScrollEl.scrollTop = prevScrollTop;
+      requestAnimationFrame(() => {
+        if (newScrollEl.isConnected && Math.abs(newScrollEl.scrollTop - prevScrollTop) > 2) {
+          newScrollEl.scrollTop = prevScrollTop;
+        }
+      });
+    }
+    if (restoreFocusId) {
+      const fEl = document.getElementById(restoreFocusId);
+      if (fEl) {
+        try {
+          fEl.focus({ preventScroll: true });
+          if (restoreSelStart !== null && typeof fEl.setSelectionRange === "function") {
+            fEl.setSelectionRange(restoreSelStart, restoreSelEnd ?? restoreSelStart);
+          }
+        } catch (_) {}
+      }
+    }
+  }
 }
 
 function renderLoginScreen() {
@@ -4268,11 +4314,11 @@ function renderLainnya() {
             <h3 class="text-sm font-bold text-slate-800">${tr("app_title")}</h3>
             <p class="text-[11px] text-slate-500 truncate">RT 17 / RW 03 Kebonagung, Malang</p>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[11px] font-bold m3-hero-tonal shrink-0">${APP_VERSION}</span>
+          <span class="px-2.5 py-1 rounded-full text-[11px] font-bold m3-hero-tonal shrink-0">${formatVersionWithCode()}</span>
         </div>
-        ${state.updateInfo ? `<div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2.5 text-xs"><div class="flex items-center gap-2 font-semibold text-emerald-800 min-w-0">${IC.spark("w-4 h-4 shrink-0")}<span class="truncate">Versi baru <strong>${state.updateInfo.version}</strong> tersedia!</span></div><button id="openUpdateModalBtn" type="button" class="px-3 py-1 rounded-xl bg-emerald-600 text-white font-semibold shrink-0">Lihat</button></div>` : ''}
+        ${state.updateInfo ? `<div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2.5 text-xs"><div class="flex items-center gap-2 font-semibold text-emerald-800 min-w-0">${IC.spark("w-4 h-4 shrink-0")}<span class="truncate">Update <strong>${state.updateInfo.version}${state.updateInfo.versionCode ? ` (VC ${state.updateInfo.versionCode})` : ''}</strong> tersedia!</span></div><button id="openUpdateModalBtn" type="button" class="px-3 py-1 rounded-xl bg-emerald-600 text-white font-semibold shrink-0">Lihat</button></div>` : ''}
         <div class="grid grid-cols-1 gap-2">
-          <button id="directDownloadApkBtn" type="button" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2"><span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} ${tr("dl_apk")}</span> (${state.updateInfo ? state.updateInfo.version : APP_VERSION})</button>
+          <button id="directDownloadApkBtn" type="button" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2"><span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} ${tr("dl_apk")}</span> (${state.updateInfo ? (state.updateInfo.version + (state.updateInfo.versionCode ? ` • VC ${state.updateInfo.versionCode}` : '')) : formatVersionWithCode()})</button>
           <button id="checkUpdateManualBtn" type="button" class="w-full h-10 rounded-2xl m3-tonal-surface text-slate-700 text-xs font-semibold hover:opacity-90"><span class="inline-flex items-center justify-center gap-1.5">${IC.refresh("w-3.5 h-3.5")} ${tr("check_upd")}</span></button>
         </div>
       </div>
@@ -4586,6 +4632,36 @@ window.wkOnApkDownloadProgress = function(status, pct, downloadedBytes, totalByt
   }
 };
 
+function getInstalledVersionCode() {
+  try {
+    if (window.AndroidBridge && typeof window.AndroidBridge.getVersionCode === "function") {
+      const vc = Number(window.AndroidBridge.getVersionCode() || 0);
+      if (vc > 0) return vc;
+    }
+  } catch (_) {}
+  return APP_VERSION_CODE;
+}
+function formatVersionWithCode(ver = APP_VERSION, vc = getInstalledVersionCode()) {
+  return vc > 0 ? `${ver} (Version Code: ${vc})` : ver;
+}
+function parseAssetVersionCode(name) {
+  const m = String(name || "").match(/version[-_ ]?code[-_ :.]*?(\d+)|[-_.]vc(\d+)/i);
+  return m ? Number(m[1] || m[2] || 0) : 0;
+}
+function pickBestApkAsset(assets) {
+  const apks = (Array.isArray(assets) ? assets : []).filter(a => String(a?.name || "").toLowerCase().endsWith(".apk"));
+  if (!apks.length) return null;
+  apks.sort((a, b) => {
+    const vcb = parseAssetVersionCode(b.name);
+    const vca = parseAssetVersionCode(a.name);
+    if (vcb !== vca) return vcb - vca;
+    const tb = b.updated_at ? Date.parse(b.updated_at) : 0;
+    const ta = a.updated_at ? Date.parse(a.updated_at) : 0;
+    return tb - ta;
+  });
+  return apks[0];
+}
+
 function startInAppApkUpdate(info) {
   if (!info || !info.downloadUrl) return;
   window.wkApkDlState.assetStamp = info.assetStamp || "";
@@ -4600,7 +4676,7 @@ function startInAppApkUpdate(info) {
   }
   const a = document.createElement("a");
   a.href = info.downloadUrl;
-  a.download = `WargaKITA-RT17-${info.version || APP_VERSION}.apk`;
+  a.download = `WargaKITA-RT17-${info.version || APP_VERSION}${info.versionCode ? `-VersionCode-${info.versionCode}` : ''}.apk`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -4608,19 +4684,24 @@ function startInAppApkUpdate(info) {
 
 function showUpdateAvailableModal(info) {
   if (!info) return;
+  const installedVc = getInstalledVersionCode();
   const isSameVerUpdate = compareVersions(info.version, APP_VERSION) === 0;
+  const targetVerBadge = info.versionCode ? `${info.version} (VC ${info.versionCode})` : info.version;
   openModal(`
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between">
-        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Wajib Update Aplikasi</span>
-        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1d4ed8] text-[10px] font-bold">${info.version}${isSameVerUpdate ? ' • Pembaruan Build' : ''}</span>
+    <div id="wkUpdateModalCard" class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between gap-2">
+        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Pembaruan Aplikasi Tersedia</span>
+        <div class="flex items-center gap-1.5">
+          <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1d4ed8] text-[10px] font-bold">${targetVerBadge}</span>
+          <button id="closeUpdateModalBtn" type="button" title="Tutup" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold">✕</button>
+        </div>
       </div>
       <div>
-        <h3 class="text-base font-bold text-slate-900">${isSameVerUpdate ? `Pembaruan Terbaru WargaKITA (${info.version}) Tersedia` : `Versi Baru WargaKITA (${info.version}) Tersedia`}</h3>
-        <p class="text-xs text-slate-500 mt-1">Versi terpasang saat ini: <strong>${APP_VERSION}</strong>. Demi kelancaran &amp; keamanan data RT 17, pembaruan akan diunduh dan dipasang langsung di dalam aplikasi.</p>
+        <h3 class="text-base font-bold text-slate-900">${isSameVerUpdate ? `Pembaruan Build Terbaru (${targetVerBadge})` : `Versi Terbaru WargaKITA (${targetVerBadge})`}</h3>
+        <p class="text-xs text-slate-500 mt-1">Versi terpasang saat ini: <strong>${formatVersionWithCode(APP_VERSION, installedVc)}</strong>. Unduh dan pasang langsung di dalam aplikasi agar semua fitur &amp; perbaikan terbaru aktif.</p>
       </div>
-      <div class="p-3.5 rounded-2xl m3-tonal-surface space-y-2 text-xs max-h-52 overflow-y-auto">
-        <p class="font-bold text-[#1d4ed8] flex items-center gap-1.5">${IC.spark("w-3.5 h-3.5")} Apa yang Baru di ${info.version}</p>
+      <div class="p-3.5 rounded-2xl m3-tonal-surface space-y-2 text-xs max-h-56 overflow-y-auto">
+        <p class="font-bold text-[#1d4ed8] flex items-center gap-1.5">${IC.spark("w-3.5 h-3.5")} Apa yang Baru di ${targetVerBadge}</p>
         ${(() => {
           if (info.notes && info.notes.trim()) {
             const formatted = info.notes
@@ -4637,7 +4718,7 @@ function showUpdateAvailableModal(info) {
               }).join("");
             return `<div class="text-slate-700 space-y-1 leading-relaxed">${formatted}</div>`;
           }
-          return `<p class="text-slate-700">Pembaruan stabilitas sistem, keamanan, dan peningkatan antarmuka WargaKITA RT 17.</p>`;
+          return `<p class="text-slate-700">Pembaruan stabilitas sistem, perbaikan bug tampilan, dan peningkatan antarmuka WargaKITA RT 17.</p>`;
         })()}
       </div>
       <div id="wkApkDlProgressWrap" class="hidden p-3.5 rounded-2xl m3-tonal-surface space-y-2">
@@ -4651,15 +4732,22 @@ function showUpdateAvailableModal(info) {
       </div>
       <div class="grid grid-cols-1 gap-2">
         <button id="wkStartApkUpdateBtn" type="button" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2">
-          <span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} Unduh &amp; Pasang Update</span> (${info.version})
+          <span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} Unduh &amp; Pasang Sekarang</span> (${targetVerBadge})
         </button>
       </div>
     </div>
   `);
   const startBtn = document.getElementById("wkStartApkUpdateBtn");
   if (startBtn) startBtn.onclick = () => startInAppApkUpdate(info);
+  const closeUpdBtn = document.getElementById("closeUpdateModalBtn");
+  if (closeUpdBtn) closeUpdBtn.onclick = () => {
+    if (window.wkApkDlState && window.wkApkDlState.active) return showToast("Sedang mengunduh pembaruan APK...");
+    closeModal();
+  };
   const mRoot = document.getElementById("modalRoot");
-  if (mRoot) mRoot.onclick = (e) => { /* Wajib update: tidak bisa ditutup lewat backdrop */ };
+  if (mRoot) mRoot.onclick = (e) => {
+    if (e.target === mRoot && !(window.wkApkDlState && window.wkApkDlState.active)) closeModal();
+  };
 }
 
 window.wkCheckUpdateNow = () => checkAppUpdate(true);
@@ -4677,18 +4765,22 @@ async function checkAppUpdate(manual = false) {
       if (manual) showToast("Informasi rilis belum tersedia.");
       return null;
     }
-    const apkAsset = (rel.assets || []).find(a => (a.name || "").toLowerCase().endsWith(".apk"));
+    const apkAsset = pickBestApkAsset(rel.assets || []);
+    const remoteVc = parseAssetVersionCode(apkAsset ? apkAsset.name : "");
+    const installedVc = getInstalledVersionCode();
     const assetStamp = (apkAsset && apkAsset.updated_at) || rel.published_at || rel.created_at || "";
     const assetMs = assetStamp ? Date.parse(assetStamp) : 0;
     const installedBuildMs = (window.AndroidBridge && typeof window.AndroidBridge.getBuildEpochMs === "function")
       ? Number(window.AndroidBridge.getBuildEpochMs() || 0)
       : APP_BUILD_EPOCH;
     const cmp = compareVersions(latestTag, APP_VERSION);
-    const sameVerRebuilt = (cmp === 0 && assetMs > 0 && installedBuildMs > 0 && (assetMs - installedBuildMs) > 15 * 60 * 1000 && localStorage.getItem("wk_applied_asset_stamp") !== assetStamp);
+    const sameVerNewCode = (cmp === 0 && remoteVc > installedVc);
+    const sameVerRebuilt = (cmp === 0 && remoteVc === 0 && assetMs > 0 && installedBuildMs > 0 && (assetMs - installedBuildMs) > 15 * 60 * 1000 && localStorage.getItem("wk_applied_asset_stamp") !== assetStamp);
 
-    if (cmp > 0 || sameVerRebuilt) {
+    if (cmp > 0 || sameVerNewCode || sameVerRebuilt) {
       const info = {
         version: latestTag,
+        versionCode: remoteVc,
         name: rel.name || ("WargaKITA " + latestTag),
         notes: rel.body || "",
         assetStamp,
@@ -4696,16 +4788,23 @@ async function checkAppUpdate(manual = false) {
       };
       state.updateInfo = info;
       if (typeof render === "function") render();
+      const notifVerLabel = remoteVc > 0 ? `${latestTag} (Version Code: ${remoteVc})` : latestTag;
       sendPhoneNotif(
-        `Update WargaKITA ${latestTag} Tersedia`,
-        `Pembaruan terbaru ${latestTag} siap diunduh & dipasang langsung di dalam aplikasi WargaKITA.`
+        `Update WargaKITA ${notifVerLabel} Tersedia`,
+        `Versi terpasang ${formatVersionWithCode(APP_VERSION, installedVc)}. Ketuk untuk mengunduh & memasang langsung di aplikasi.`
       );
-      setNawakMood("update", "update", 8000); setTimeout(() => playNawakVoice("update"), 320); showUpdateAvailableModal(info);
+      const modalRoot = document.getElementById("modalRoot");
+      const canAutoPopup = manual || !modalRoot || modalRoot.classList.contains("hidden");
+      if (canAutoPopup && !(window.wkApkDlState && window.wkApkDlState.active)) {
+        setNawakMood("update", "update", 8000);
+        setTimeout(() => playNawakVoice("update"), 320);
+        showUpdateAvailableModal(info);
+      }
       return info;
     } else {
       state.updateInfo = null;
-      if (manual) showToast(`Aplikasi sudah versi terbaru (${APP_VERSION}).`);
-      return { latestTag, downloadUrl: apkAsset ? apkAsset.browser_download_url : GITHUB_RELEASE_URL, assetStamp, upToDate: true };
+      if (manual) showToast(`Aplikasi sudah versi terbaru (${formatVersionWithCode(APP_VERSION, installedVc)}).`);
+      return { latestTag, versionCode: remoteVc, downloadUrl: apkAsset ? apkAsset.browser_download_url : GITHUB_RELEASE_URL, assetStamp, upToDate: true };
     }
   } catch (_) {
     if (manual) showToast("Gagal terhubung ke server update.");
@@ -11477,9 +11576,42 @@ function showCashMonthlyPdfModal() {
 // ============================================================================
 let lastBackPress = 0;
 window.wkHandleBack = function() {
+  const blurSel = document.getElementById("wkBlurSelectOverlay");
+  if (blurSel) {
+    blurSel.remove();
+    return true;
+  }
+  const confOv = document.getElementById("wkConfirmOverlay");
+  if (confOv) {
+    confOv.remove();
+    return true;
+  }
+  const qrisOv = document.getElementById("qrisFullscreenOverlay");
+  if (qrisOv) {
+    const closeQBtn = document.getElementById("closeQrisFullBtn");
+    if (closeQBtn) closeQBtn.click();
+    else qrisOv.remove();
+    return true;
+  }
+  const attachPop = document.getElementById("nawakAttachPopover");
+  if (attachPop && !attachPop.classList.contains("hidden")) {
+    attachPop.classList.add("hidden");
+    return true;
+  }
+  const driveSheet = document.getElementById("nawakDriveSheet");
+  if (driveSheet && !driveSheet.classList.contains("hidden")) {
+    driveSheet.classList.add("hidden");
+    return true;
+  }
   const modal = document.getElementById("modalRoot");
   if (modal && !modal.classList.contains("hidden")) {
-    closeModal();
+    if (document.getElementById("wkUpdateModalCard") && window.wkApkDlState && window.wkApkDlState.active) {
+      showToast("Sedang mengunduh pembaruan APK...");
+      return true;
+    }
+    const closeNawak = document.getElementById("closeNawakBtn");
+    if (closeNawak) closeNawak.click();
+    else closeModal();
     return true;
   }
   if (state.selectedHouseholdId) {
@@ -11508,6 +11640,7 @@ function setupPullToRefresh() {
   let startY = 0, pulling = false, dy = 0;
 
   sc.addEventListener("touchstart", (e) => {
+    window.__wkTouchActive = true;
     const modalOpen = !document.getElementById("modalRoot").classList.contains("hidden");
     if (!modalOpen && sc.scrollTop <= 0) { startY = e.touches[0].clientY; pulling = true; dy = 0; }
   }, { passive: true });
@@ -11526,7 +11659,12 @@ function setupPullToRefresh() {
     }
   }, { passive: true });
 
-  sc.addEventListener("touchend", () => {
+  const finishTouch = () => {
+    window.__wkTouchActive = false;
+    if (window.__wkPendingSilentRender) {
+      window.__wkPendingSilentRender = false;
+      setTimeout(() => { if (!window.__wkTouchActive && typeof render === "function") render(); }, 160);
+    }
     if (pulling && dy > 78 && sc.scrollTop <= 0) {
       bar.style.transform = "translateX(-50%) translateY(8px)";
       bar.style.opacity = "1";
@@ -11538,7 +11676,9 @@ function setupPullToRefresh() {
       bar.style.opacity = "0";
     }
     pulling = false; dy = 0;
-  });
+  };
+  sc.addEventListener("touchend", finishTouch, { passive: true });
+  sc.addEventListener("touchcancel", finishTouch, { passive: true });
 }
 
 function bindLoginEvents() {
@@ -11783,11 +11923,7 @@ function bindScreenEvents() {
     state.cashPage = 1;
     clearTimeout(window.__wkCashSearchT);
     window.__wkCashSearchT = setTimeout(() => {
-      const scY = window.scrollY;
       render();
-      window.scrollTo(0, scY);
-      const el = document.getElementById("cashSearchInput");
-      if (el) { el.focus({ preventScroll: true }); el.setSelectionRange(el.value.length, el.value.length); }
     }, 110);
   };
   document.querySelectorAll("[data-cash-status]").forEach(b => b.onclick = () => { state.cashStatusFilter = b.getAttribute("data-cash-status"); state.cashPage = 1; render(); });
@@ -12391,9 +12527,12 @@ setInterval(() => {
 
 document.addEventListener("focusin", (e) => {
   const el = e.target;
-  if (!el || !["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) return;
+  if (!el || !["INPUT", "TEXTAREA"].includes(el.tagName)) return;
+  const r = el.getBoundingClientRect();
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  if (r.top >= 40 && r.bottom <= vh - 40) return;
   setTimeout(() => {
-    try { el.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (_) {}
+    try { el.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (_) {}
   }, 220);
 });
 function syncVvh() {
@@ -12405,10 +12544,14 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", () => {
     syncVvh();
     const active = document.activeElement;
-    if (active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName)) {
-      setTimeout(() => {
-        try { active.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (_) {}
-      }, 100);
+    if (active && ["INPUT", "TEXTAREA"].includes(active.tagName)) {
+      const r = active.getBoundingClientRect();
+      const vh = window.visualViewport.height;
+      if (r.bottom > vh - 16 || r.top < 16) {
+        setTimeout(() => {
+          try { active.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (_) {}
+        }, 100);
+      }
     }
   });
 }

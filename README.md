@@ -1,12 +1,12 @@
 # WargaKITA — Aplikasi Administrasi & Keuangan RT 17 / RW 03 Kebonagung
 
-**WargaKITA** (`v1.17.0` · `versionCode = 29`) adalah aplikasi **Android & Web** berdesain **Android 17 (Material 3 Expressive)** untuk pengelolaan data kependudukan, iuran tahunan warga, kas RT, siaran info lingkungan *real-time*, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, Realtime, Edge Functions) serta server **WebSocket (`server.ts`)**.
+**WargaKITA** (`v1.17.0` · `versionCode = 30`) adalah aplikasi **Android & Web** berdesain **Android 17 (Material 3 Expressive)** untuk pengelolaan data kependudukan, iuran tahunan warga, kas RT, siaran info lingkungan *real-time*, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, Realtime, Edge Functions) serta server **WebSocket (`server.ts`)**.
 
-> **Sorotan Rilis `v1.17.0` (`versionCode = 29`):**
-> - **Unduh & Pasang Update APK Langsung Di Dalam Aplikasi:** Menekan tombol update tidak lagi melempar ke browser eksternal — APK terunduh langsung di dalam aplikasi dengan **progress bar persentase & MB real-time**, otomatis memicu **Package Installer Android**, serta tetap mendeteksi build terbaru meski pada versi yang sama (`v1.17.0`).
-> - **Android 17 (Material 3 Expressive) + 4 Palet Material You & Dark Mode:** Redesign menyeluruh di 5 tab utama, *Desktop Navigation Rail*, mode **Terang / Gelap / Otomatis**, serta 4 palet warna dinamis (*Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat*).
+> **Sorotan Rilis `v1.17.0` (`Version Code: 30`):**
+> - **Unduh & Pasang Update APK Langsung Di Dalam Aplikasi + Sub-APK `Version Code`:** Menekan tombol update tidak lagi melempar ke browser — APK terunduh langsung di dalam aplikasi dengan **progress bar persentase & MB real-time**. Mendukung sub-APK bernomor (`WargaKITA-RT17-v1.17.0-VersionCode-30.apk`, dst.), mengarahkan seluruh versi lama (`v1.15.x`, `v1.16.x`, hingga build `v1.17.0` sebelumnya) ke rilis terbaru, popup otomatis di **Dashboard**, serta notifikasi latar belakang bagi perangkat yang belum dibuka.
+> - **Android 17 (Material 3 Expressive) + 4 Palet Material You & Dark Mode:** Redesign menyeluruh di 5 tab utama, *Desktop Navigation Rail*, mode **Terang / Gelap / Otomatis**, ikon *pull-to-refresh* selaras warna tema aktif, serta 4 palet warna dinamis (*Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat*).
 > - **Aturan Iuran Tahunan (1×/Tahun per Kategori) & Tunggakan Manual Lintas Tahun (`010`):** Cicilan lintas bulan, rincian piutang per tahun & kategori, pelunasan otomatis FIFO tahun terlama, navigasi tahun (`2026 ↔ 2027`), serta koreksi tunggakan historis (`>= 2020`).
-> - **Dropdown Anti-Salah Pencet Saat Scroll & 14 Hak Akses Granular:** Perbaikan sensitivitas sentuhan seluruh dropdown agar tidak terbuka saat menggulir layar, siaran info warga *real-time* WebSocket, laporan kas per petugas PDF, serta 14 izin granular di Panel Developer.
+> - **Stabilitas Gulir, Tombol Back Dropdown & 14 Hak Akses Granular:** Perbaikan anti-loncat ke atas saat menggulir daftar ke bawah, tombol Back Android menutup dropdown blur terbuka lebih dulu, dropdown anti-salah pencet saat scroll, siaran info warga *real-time* WebSocket, laporan kas per petugas PDF, serta 14 izin granular di Panel Developer.
 
 ---
 
