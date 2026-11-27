@@ -106,3 +106,7 @@ jobs:
             - **Siaran Info Warga Real-Time (`server.ts`):** Server WebSocket `/ws` menyiarkan Info Ronda, Kerja Bakti, Pengumuman RT & Agenda langsung ke semua perangkat, dengan kontrol khusus *Developer, Pak RT & Wakil RT* (termasuk edit Kartu Ucapan Ulang Tahun).
             - **Laporan Kas Bulanan & Per Petugas PDF:** Otomatis memilih cakupan petugas sesuai akun login, perbandingan *Month-over-Month*, & rincian pembayar per petugas.
             - **Panel Developer:** Ekspansi **14 centang hak akses granular** tersinkron hingga RLS database.
+            ### Pengunduh APK Dalam Aplikasi, Deteksi Build Ulang & Perbaikan Dropdown
+            - **Unduh & Pasang Update Langsung Di Dalam Aplikasi:** Progress bar persentase & MB real-time langsung di dialog update tanpa keluar ke browser eksternal, dilanjutkan pemasangan APK otomatis (`PackageInstaller`).
+            - **Deteksi Pembaruan Build Pada Versi Sama (`v1.17.0`):** `UpdateCheckReceiver` & `checkAppUpdate()` mendeteksi rilis APK terbaru berdasarkan stempel waktu kompilasi (`BUILD_EPOCH_MS`) dan notifikasi siaran real-time.
+            - **Pelindung Dropdown Anti-Salah Pencet Saat Scroll:** Mencegah seluruh dropdown terbuka tidak sengaja ketika pengguna menggulir halaman.

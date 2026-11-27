@@ -2,189 +2,245 @@
 
 **WargaKITA** (`v1.17.0` · `versionCode = 29`) adalah aplikasi **Android & Web** berdesain **Android 17 (Material 3 Expressive)** untuk pengelolaan data kependudukan, iuran tahunan warga, kas RT, siaran info lingkungan *real-time*, asisten AI **NawakAI**, dan pelaporan keuangan **RT 17 / RW 03 Kebonagung, Pakisaji, Malang**, terintegrasi dengan **Supabase** (Auth, PostgreSQL + RLS, Storage, Realtime, Edge Functions) serta server **WebSocket (`server.ts`)**.
 
-> **Pembaruan Utama `v1.17.0` (`versionCode = 29`):**
-> - **Android 17 (Material 3 Expressive) & Dark Mode Dinamis:** Redesign menyeluruh di 5 tab (*Dashboard, Data Warga, Data KK & Iuran, Cash RT, Lainnya*), *Desktop Navigation Rail*, *Bottom Navigation Bar* mobile, mode **Terang / Gelap / Otomatis Sistem**, serta **4 palet warna Material You** (*Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat*) yang menyelaraskan seluruh UI dan grafik.
-> - **Aturan Iuran Tahunan (1×/Tahun per Kategori) & Tunggakan Manual Beda Tahun (`010`):** Dukungan cicilan lintas bulan, akumulasi rincian piutang per tahun & per kategori, pelunasan otomatis FIFO tahun terlama, navigasi lintas tahun (`2026 ↔ 2027`), serta input/koreksi tunggakan historis tahun sebelumnya (`>= 2020`).
-> - **Siaran Info Warga Real-Time WebSocket (`server.ts`):** Penyiaran instan (*Info Ronda, Kerja Bakti, Pengumuman RT, Agenda Warga*) ke semua perangkat aktif, pemisahan tab *Info Warga* vs *Approval Kas*, serta kontrol khusus *Developer, Pak RT & Wakil RT* untuk siaran info dan edit Kartu Ucapan Ulang Tahun.
-> - **Laporan Kas Bulanan & Per Petugas PDF + 14 Hak Akses Granular:** Cakupan petugas terpilih otomatis sesuai akun login, perbandingan *Month-over-Month (MoM)*, urutan anggota KK baku (`009` + `security_invoker`), serta 14 centang izin granular di Panel Developer.
+> **Sorotan Rilis `v1.17.0` (`versionCode = 29`):**
+> - **Unduh & Pasang Update APK Langsung Di Dalam Aplikasi:** Menekan tombol update tidak lagi melempar ke browser eksternal — APK terunduh langsung di dalam aplikasi dengan **progress bar persentase & MB real-time**, otomatis memicu **Package Installer Android**, serta tetap mendeteksi build terbaru meski pada versi yang sama (`v1.17.0`).
+> - **Android 17 (Material 3 Expressive) + 4 Palet Material You & Dark Mode:** Redesign menyeluruh di 5 tab utama, *Desktop Navigation Rail*, mode **Terang / Gelap / Otomatis**, serta 4 palet warna dinamis (*Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat*).
+> - **Aturan Iuran Tahunan (1×/Tahun per Kategori) & Tunggakan Manual Lintas Tahun (`010`):** Cicilan lintas bulan, rincian piutang per tahun & kategori, pelunasan otomatis FIFO tahun terlama, navigasi tahun (`2026 ↔ 2027`), serta koreksi tunggakan historis (`>= 2020`).
+> - **Dropdown Anti-Salah Pencet Saat Scroll & 14 Hak Akses Granular:** Perbaikan sensitivitas sentuhan seluruh dropdown agar tidak terbuka saat menggulir layar, siaran info warga *real-time* WebSocket, laporan kas per petugas PDF, serta 14 izin granular di Panel Developer.
 
 ---
 
-## Daftar Isi
-1. [Tab Dashboard, Notifikasi Live & Kalender Warga](#1-tab-dashboard-notifikasi-live--kalender-warga)
-2. [Asisten AI — NawakAI](#2-asisten-ai--nawak-ai)
-3. [Tab Data Warga & Urutan Anggota KK Baku](#3-tab-data-warga--urutan-anggota-kk-baku)
-4. [Tab Data KK & Iuran Tahunan + Tunggakan Lintas Tahun](#4-tab-data-kk--iuran-tahunan--tunggakan-lintas-tahun)
-5. [Tab Cash RT, Grafik Donat & Laporan Per Petugas](#5-tab-cash-rt-grafik-donat--laporan-per-petugas)
-6. [Tab Lainnya, Tema Material You & Laporan](#6-tab-lainnya-tema-material-you--laporan)
-7. [Panel Khusus Developer & 14 Hak Akses Granular](#7-panel-khusus-developer--14-hak-akses-granular)
-8. [Matriks Hak Akses & Arsitektur Sistem](#8-matriks-hak-akses--arsitektur-sistem)
+## Daftar Isi (Menu, Sub-Menu & Kegunaan)
+
+<details open>
+<summary><strong>Navigasi Lengkap Menu & Sub-Menu WargaKITA v1.17.0</strong></summary>
+
+1. [**Tab 1 — Dashboard & Pusat Kendali**](#1-tab-1--dashboard--pusat-kendali)
+   - **1.1 Ringkasan KPI & Grafik Tren 6 Bulan:** Pantau total KK aktif, warga aktif, saldo kas approved, piutang iuran, dan grafik batang pemasukan 6 bulan (Desktop Navigation Rail & Mobile).
+   - **1.2 Kalender Kegiatan Warga & Jadwal Ronda:** Lihat kalender bulanan, Agenda Resmi RT, jadwal ronda malam, dan sinkronisasi ke Kalender Android.
+   - **1.3 Daftar Ulang Tahun & Kartu Ucapan Ulang Tahun:** Cetak/kirim kartu ucapan 3 tema visual + 6 template sesuai usia ke WhatsApp (edit kartu khusus *Developer, Pak RT, Wakil RT*).
+   - **1.4 Pusat Notifikasi & Siaran Info Warga Real-Time:** Pemisahan tab *Info Warga* vs *Approval Kas* serta formulir *Siarkan Info Baru* langsung ke seluruh perangkat aktif via WebSocket.
+2. [**Asisten Cerdas — NawakAI (Panduan Khusus & Fitur Lengkap)**](#2-asisten-cerdas--nawak-ai-panduan-khusus--fitur-lengkap)
+   - **2.1 Beranda Cepat & Antarmuka Gemini (Terang & Gelap OLED):** Tombol mengambang *draggable* dengan 6 ekspresi maskot dan akses 1 ketuk ke perintah populer.
+   - **2.2 Eksekusi Perintah Data RT Real-Time (Kas, Tunggakan, Janda, Ronda, Briefing & Draft WA):** Tanya-jawab bahasa Indonesia, singkatan WA, hingga dialek Jawa-Malangan (*NLU 5 lapis anti-typo*).
+   - **2.3 Menu Lampiran `+` (Foto, Kamera, File Dokumen, Google Drive) & OCR Lokal:** Baca gambar nota/KTP/KK, PDF, Excel, dan Word langsung untuk dirangkum atau diimpor ke database.
+   - **2.4 Voice Input Inline, Suara TTS Offline & Export Data Warga 4 Format:** Perintah suara 14-bar waveform, pembacaan suara lokal, filter status warga, dan export **PNG, Excel, Word `.docx`, & PDF**.
+3. [**Tab 2 — Data Warga**](#3-tab-2--data-warga)
+   - **3.1 Direktori Terurut Baku & Mode Sortir Ganda:** Tampilan *Urut KK & Tgl Lahir* (`Kepala → Istri → Anak → dst`) atau *Urut Abjad A–Z*.
+   - **3.2 Pencarian Instan & Filter Status/Agama:** Filter *Permanen, Kontrak, Kost, Tidak Aktif, Pindah Domisili, Meninggal Dunia* serta agama.
+   - **3.3 Tambah Warga Baru (1 KK) & Tambah Warga Lama (KK Ada):** Input keluarga baru lengkap atau penambahan anggota pada KK terdaftar.
+   - **3.4 Tinjau, Edit Data Warga & Sensor NIK Otomatis:** Pembaruan profil, status *Meninggal Dunia*, sinkronisasi alamat ke tabel `households`, dan proteksi NIK.
+4. [**Tab 3 — Data KK & Iuran Tahunan**](#4-tab-3--data-kk--iuran-tahunan)
+   - **4.1 Navigasi Periode Lintas Tahun & 4 Kartu Filter Cepat:** Pergantian bulan/tahun (`2026 ↔ 2027`), progres kepatuhan, dan filter *Wajib Penuh, Janda Rukem, Kost Bebas, Menunggak*.
+   - **4.2 Detail KK, Urutan Anggota & Pengaturan Tunggakan Manual Beda Tahun:** Rincian piutang lintas tahun, tombol *Ingatkan WhatsApp*, dan modal koreksi tunggakan historis (`>= 2020`).
+   - **4.3 Catat Pembayaran Iuran, Cicilan FIFO & QRIS Layar Penuh:** Pembayaran cicilan lintas bulan, pelunasan otomatis tahun terlama (*FIFO*), bukti wajib foto, serta **QRIS Layar Penuh DANA** dengan kecerahan layar otomatis 100%.
+5. [**Tab 4 — Cash RT & Pelaporan Petugas**](#5-tab-4--cash-rt--pelaporan-petugas)
+   - **5.1 Kartu Saldo, KPI & Edit Saldo Awal:** Pemantauan Saldo Approved, Pemasukan, Pengeluaran, Saldo Awal, dan Tunggakan.
+   - **5.2 Grafik Donat Pemasukan Material You:** Distribusi seluruh kategori pemasukan dengan tooltip tepi luar dan palet warna sesuai tema aktif.
+   - **5.3 Laporan Kas Bulanan & Per Petugas (PDF):** Perbandingan *Month-over-Month (MoM)*, cakupan otomatis sesuai Bendahara login, daftar pembayar, dan cetak PDF.
+   - **5.4 Riwayat Transaksi Detail, Catat Kas (10 Kategori) & Approval Kas:** Pencarian anti-loncat scroll, paginasi 10 item, foto nota, dan konfirmasi *ACC / Tolak* berlatar blur.
+6. [**Tab 5 — Lainnya, Tema Material You & Update In-App**](#6-tab-5--lainnya-tema-material-you--update-in-app)
+   - **6.1 Profil Akun, Edit Profil & Ganti Password:** Pengelolaan nama tampilan, nomor HP/WA, jabatan, dan foto profil per pengguna.
+   - **6.2 Laporan Keuangan 1 Bulan (Multi-PNG & PDF) & Rekap Kas Tahunan:** Rincian saldo, daftar lengkap KK belum lunas, dan *highlight* Bulan Aktif di rekap 12 bulan.
+   - **6.3 Import & Export Excel Database Warga + Riwayat Aktivitas:** Template Excel terformat, Export Global, Import massal anti-duplikat, dan log audit berpaginasi.
+   - **6.4 Tema Dinamis Material You (4 Palet & Mode Terang/Gelap/Otomatis) + Bahasa:** Pratinjau langsung *Samudra RT 17, Zamrud Asri, Violet Senja, Koral Hangat* dan bahasa `ID / EN / JV`.
+   - **6.5 Info Aplikasi & Pengunduh APK Dalam Aplikasi (`v1.17.0`):** Unduhan APK native dengan *progress bar* langsung di aplikasi, deteksi pembaruan pada versi yang sama, dan pemicu pemasang Android.
+7. [**Panel Khusus Developer & 14 Hak Akses Granular**](#7-panel-khusus-developer--14-hak-akses-granular)
+   - **7.1 Kelola User Login & 14 Centang Izin Granular (`custom_permissions`):** Manajemen akun penuh yang tersinkron langsung ke PostgreSQL RLS.
+   - **7.2 Ubah Password User & Reset Data Periode Berjalan:** Pemulihan akses akun pengurus dan utilitas pembersihan periode pengujian.
+8. [**Matriks Hak Akses & Arsitektur Sistem**](#8-matriks-hak-akses--arsitektur-sistem)
+
+</details>
 
 ---
 
-## 1. Tab Dashboard, Notifikasi Live & Kalender Warga
+## 1. Tab 1 — Dashboard & Pusat Kendali
 
 <p align="center">
-  <img src="docs/screenshots/dash_1.jpg" width="190" alt="Dashboard KPI & Grafik Material 3 Expressive" />
-  <img src="docs/screenshots/dash_2.jpg" width="190" alt="Kalender Agenda & Ulang Tahun Warga" />
-  <img src="docs/screenshots/dash_3.jpg" width="190" alt="Kartu Ucapan Ulang Tahun" />
-  <img src="docs/screenshots/dash_4.jpg" width="190" alt="Pusat Notifikasi Info Warga & Approval" />
+  <img src="docs/screenshots/dash_desktop.jpg" width="680" alt="Desktop Navigation Rail & Dashboard Dark Mode Samudra RT 17" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/dash_1.jpg" width="165" alt="Dashboard KPI & Grafik 6 Bulan (Terang - Samudra)" />
+  <img src="docs/screenshots/dash_2.jpg" width="165" alt="Kalender Kegiatan Warga & Ulang Tahun" />
+  <img src="docs/screenshots/dash_3.jpg" width="165" alt="Kartu Ucapan Ulang Tahun 3 Tema" />
+  <img src="docs/screenshots/dash_4.jpg" width="165" alt="Pusat Notifikasi Info Warga & Approval" />
+  <img src="docs/screenshots/dash_5.jpg" width="165" alt="Siarkan Info Warga Real-Time WebSocket" />
 </p>
 
-Tab **Dashboard** menjadi pusat kendali cepat bagi pengurus dan warga untuk memantau kondisi RT 17 secara *real-time*:
+Tab **Dashboard** adalah pusat kendali utama bagi pengurus dan warga untuk memantau ringkasan operasional RT 17 secara *real-time*:
 
-- **Navigasi Responsif Material 3 Expressive:** Pada layar ponsel menggunakan *Bottom Navigation Bar* yang ringkas (`<= 390px`), sedangkan di tablet/desktop otomatis menampilkan **Desktop Navigation Rail** di sisi kiri lengkap dengan indikator status koneksi **Live WebSocket**.
-- **4 Kartu KPI & Grafik Pemasukan 6 Bulan:** Menampilkan **Total KK Aktif**, **Total Warga Aktif**, **Saldo Kas RT (Approved)**, dan **Tunggakan Iuran** periode aktif, disertai **grafik batang tren pemasukan 6 bulan terakhir** dengan desain kapsul membulat yang warnanya otomatis mengikuti palet Material You terpilih.
-- **Pusat Notifikasi Real-Time WebSocket & Siaran Info Warga:**
-  - Memisahkan tab **Info Warga** (khusus berisi info relevan seperti *Info Ronda, Kerja Bakti, Agenda Warga, Pembayaran Iuran, Pengumuman RT* tanpa tercampur spam *pending approval*) dengan tab **Approval Kas**.
-  - Menu **Siarkan Info Baru** (`canBroadcastInfo`) khusus muncul untuk **Developer, Pak RT, dan Wakil RT**, lengkap dengan 4 tombol kategori *template otomatis* yang masih dapat diedit sebelum disiarkan langsung ke seluruh perangkat aktif via WebSocket.
-- **Kalender Kegiatan Warga & Kartu Ucapan Ulang Tahun:** Membedakan **Agenda Resmi RT** (termasuk jadwal ronda malam) dan **Ulang Tahun Kepala Keluarga Permanen**, dilengkapi sinkronisasi ke Kalender Android, notifikasi berkala HP, serta **Kartu Ucapan Ulang Tahun** (3 tema visual + 6 template sesuai usia dengan tombol Unduh PNG & Kirim WhatsApp — hak edit kartu ucapan dibatasi khusus **Developer, Pak RT, dan Wakil RT**).
+- **1.1 Ringkasan KPI & Grafik Tren 6 Bulan (`dash_desktop.jpg`, `dash_1.jpg`):**
+  - Responsif otomatis antara **Bottom Navigation Bar** di ponsel dan **Desktop Navigation Rail** di tablet/desktop lengkap dengan indikator **Live WS**.
+  - Menampilkan 4 kartu KPI utama (**Total KK Aktif**, **Total Warga Aktif**, **Saldo Kas RT Approved**, **Tunggakan Iuran**) dan grafik batang kapsul 6 bulan terakhir yang menyesuaikan warna tema Material You aktif.
+- **1.2 Kalender Kegiatan Warga & Jadwal Ronda (`dash_2.jpg`):**
+  - Memisahkan **Agenda Resmi RT** (termasuk jadwal ronda malam terjadwal) dari **Ulang Tahun Warga Permanen**, dilengkapi tombol **`+ Kegiatan`** (`canEditCalendar`) dan sinkronisasi otomatis ke aplikasi Kalender Android.
+- **1.3 Kartu Ucapan Ulang Tahun (`dash_3.jpg`):**
+  - Menampilkan pemilih Kepala Keluarga, **6 template ucapan otomatis sesuai usia** (*Resmi, Hormat Sesepuh ≥55 Th, Santai, Lucu Malangan, Awet Muda, Islami*), **3 tema kartu visual** (*Biru RT 17, Navy Emas, Hijau Segar*), serta tombol **Unduh Gambar PNG** dan **Kirim Langsung ke WhatsApp Warga**. Hak sunting kartu dibatasi khusus **Developer, Pak RT, dan Wakil RT**.
+- **1.4 Pusat Notifikasi & Siaran Info Warga Real-Time (`dash_4.jpg`, `dash_5.jpg`):**
+  - Memisahkan tab **Info Warga** (*Info Ronda, Kerja Bakti, Pengumuman RT, Agenda Warga, Pembayaran*) dari tab **Approval Kas** agar informasi warga tidak tenggelam oleh antrean transaksi.
+  - Tombol **Siarkan Info Baru** (`canBroadcastInfo`) khusus **Developer, Pak RT, dan Wakil RT** menyediakan 4 template otomatis siap sunting yang disiarkan seketika via WebSocket & Supabase Realtime ke semua HP aktif.
 
 ---
 
-## 2. Asisten AI — NawakAI
+## 2. Asisten Cerdas — NawakAI (Panduan Khusus & Fitur Lengkap)
 
 <p align="center">
-  <img src="docs/screenshots/nawak_2.jpg" width="180" alt="Beranda NawakAI" />
-  <img src="docs/screenshots/nawak_3.jpg" width="180" alt="Chat Gemini NawakAI" />
-  <img src="docs/screenshots/nawak_4.jpg" width="180" alt="Timeline Proses NawakAI" />
-  <img src="docs/screenshots/nawak_5.jpg" width="180" alt="Input & Lampiran NawakAI" />
+  <img src="docs/screenshots/nawak_1.jpg" width="170" alt="Beranda Cepat NawakAI & 6 Ekspresi" />
+  <img src="docs/screenshots/nawak_2.jpg" width="170" alt="Perintah Langsung: Ringkasan Kas RT" />
+  <img src="docs/screenshots/nawak_3.jpg" width="170" alt="Perintah Langsung: Cek Tunggakan & Rincian Iuran" />
+  <img src="docs/screenshots/nawak_4.jpg" width="170" alt="Perintah Langsung: Data Janda RT 17" />
+  <img src="docs/screenshots/nawak_5.jpg" width="170" alt="Perintah Langsung: Jadwal Ronda Malam" />
 </p>
 <p align="center">
-  <img src="docs/screenshots/nawak_6.jpg" width="180" alt="Baca & Rangkum File NawakAI" />
-  <img src="docs/screenshots/nawak_7.jpg" width="180" alt="Export & Aksi Database NawakAI" />
-  <img src="docs/screenshots/nawak_1.jpg" width="320" alt="6 Ekspresi & Suara NawakAI" />
+  <img src="docs/screenshots/nawak_6.jpg" width="185" alt="Menu Lampiran + (Foto, Kamera, File, Google Drive)" />
+  <img src="docs/screenshots/nawak_7.jpg" width="185" alt="Export Data Warga 4 Format & Filter Status" />
+  <img src="docs/screenshots/nawak_8.jpg" width="185" alt="Mode Gelap OLED: Briefing Harian Cerdas RT 17" />
+  <img src="docs/screenshots/nawak_9.jpg" width="185" alt="Mode Gelap OLED: Generator Draft Pengumuman WA" />
 </p>
 
-**NawakAI** adalah asisten cerdas interaktif RT 17 berbentuk maskot **Wajik Biru** mengambang (*draggable*, posisi tersimpan otomatis) dengan antarmuka **bergaya Gemini**:
+**NawakAI** adalah asisten AI interaktif RT 17 berikon **Wajik Biru** mengambang (*draggable*, posisi tersimpan di memori perangkat) dengan antarmuka **bergaya Gemini** yang beradaptasi penuh antara mode Terang dan Gelap OLED:
 
-- **NLU 5 Lapis Anti-Typo & Bahasa Jawa-Malangan:** Memahami 150+ singkatan WA dan dialek Malangan (`brp`, `jnd`, `rondo`, `drg`, `byr`, `saiki`, `sopo`), koreksi typo otomatis *Damerau-Levenshtein (≤ 2)*, *disambiguasi nama ganda*, serta memori percakapan *multi-turn* untuk revisi draft instan.
-- **Voice Command & 7 Audio ElevenLabs *Offline*:** Mendukung perintah suara langsung `id-ID` (*waveform* 14 bar di dalam kotak chat), tombol baca suara TTS (`🔊/🔇`), tombol Henti Paksa (`□`), dan 6 ekspresi maskot yang sinkron dengan waktu WIB Malang.
-- **Pembaca Semua Jenis File + OCR Lokal:** Tombol `+` mendukung pembacaan **PNG, JPG, WEBP, PDF (hingga 10 halaman + OCR Tesseract), Excel/CSV/ODS, Word (`.docx`/`.doc`), dan TXT/JSON**, sekaligus mampu mendeteksi data warga/KK siap import anti-duplikat.
-- **Eksekusi Terkonfirmasi & Export 4 Format:** Khusus **Developer, Pak RT, dan Wakil RT** dapat menjalankan pelunasan KK (termasuk **pembayaran iuran tahunan lintas tahun FIFO**), *batch approval* kas pending, maupun ekspor data warga terurut baku ke **PNG, Excel, Word `.docx` OOXML, dan PDF** dengan filter status (*Permanen, Kontrak, Kost, Janda, Pindah Domisili, Meninggal Dunia*).
+### Sub-Menu & Kemampuan Operasional NawakAI
+
+| Sub-Fitur NawakAI | Contoh Perintah / Aksi Nyata | Fungsi & Kegunaan Utama |
+| :--- | :--- | :--- |
+| **2.1 Beranda Cepat & Tombol Aksi** (`nawak_1.jpg`) | Ketuk kartu *Ringkasan Kas*, *Cek Tunggakan*, *Data Janda*, *Export Warga*, atau chip *Briefing Hari Ini*, *Kartu Ultah*, *Pengumuman WA* | Jalan pintas 1 ketuk untuk memantau data RT terpenting tanpa mengetik dari awal, disertai tombol reset percakapan dan sakelar suara TTS (`🔊/🔇`). |
+| **2.2 Analitik Kas & Tunggakan Real-Time** (`nawak_2.jpg`, `nawak_3.jpg`) | `"Ringkasan kas & pemasukan RT bulan ini"`, `"Siapa saja KK yang belum lunas bulan ini?"` | Menghitung otomatis Saldo Awal, Pemasukan/Pengeluaran Approved, Pending Approval, serta mengelompokkan KK status **Lunas**, **Sebagian** (lengkap dengan sisa kurang bayar), dan **Belum Bayar**. |
+| **2.3 Direktori Khusus & Jadwal Ronda** (`nawak_4.jpg`, `nawak_5.jpg`) | `"Ada berapa janda di RT 17?"`, `"Jadwal ronda malam regu 1"` | Menyaring daftar KK Janda (*Wajib Rukem* vs *Bayar Penuh*), menampilkan daftar personel regu ronda + personel Kost tambahan lengkap beserta jam wajib jaga. |
+| **2.4 Briefing Harian & Audit Data** (`nawak_8.jpg`) | `"Briefing hari ini"`, `"Audit kebersihan NIK & data warga"` | Merangkum kondisi kas, transaksi menunggu ACC, tingkat kepatuhan iuran, jadwal ronda terdekat, daftar ulang tahun hari ini, hingga deteksi data warga tanpa NIK 16 digit. |
+| **2.5 Pembuat Draft Pengumuman WA & Surat** (`nawak_9.jpg`) | `"Buatkan draft pengumuman WA kerja bakti Minggu pagi"`, `"Buat surat pengantar domisili"` | Menyusun teks pengumuman WhatsApp terstruktur (*Acara, Kerja Bakti, Tahlil, Berita Duka/Lelayu, Iuran*) maupun draf surat pengantar RT 17 dengan memori revisi multi-turn. |
+| **2.6 Pembaca Lampiran `+` & OCR Lokal** (`nawak_6.jpg`) | Lampirkan lewat *Foto, Kamera, File, Google Drive* | Membaca struk belanja/nota, gambar KTP/KK, PDF hingga 10 halaman (*Tesseract.js OCR*), Excel/CSV/ODS, dan Word `.docx` untuk diringkas, dicatat ke kas, atau diimpor anti-duplikat. |
+| **2.7 Export Data Warga 4 Format & Filter** (`nawak_7.jpg`) | `"Export warga ke PDF/Excel"`, centang kolom & status | Memilih kolom spesifik (*No, Alamat, No. KK, NIK, Hubungan, Tgl Lahir, No. HP, Status*) dan filter 6 status warga (*Permanen, Kontrak, Kost, Janda, Pindah, Meninggal*) ke **PNG, Excel, Word `.docx`, dan PDF**. |
+| **2.8 NLU 5 Lapis, Voice Input & Eksekusi Aksi** | Bahasa gaul/dialek Malangan (`"kas saiki"`, `"sopo drg byr"`), perintah suara | Koreksi typo *Damerau-Levenshtein (≤ 2)*, disambiguasi nama ganda, perekam suara *14-bar waveform* inline, 7 audio ElevenLabs *offline*, serta tombol aksi pelunasan FIFO & *batch approval* khusus pengurus berwenang. |
 
 ---
 
-## 3. Tab Data Warga & Urutan Anggota KK Baku
+## 3. Tab 2 — Data Warga
 
 <p align="center">
-  <img src="docs/screenshots/warga_1.jpg" width="180" alt="Direktori Data Warga" />
-  <img src="docs/screenshots/warga_2.jpg" width="180" alt="Filter Status & Agama" />
-  <img src="docs/screenshots/warga_3.jpg" width="180" alt="Tambah Warga Baru 1 KK" />
-  <img src="docs/screenshots/warga_4.jpg" width="180" alt="Tambah Warga Lama KK Ada" />
-  <img src="docs/screenshots/warga_5.jpg" width="180" alt="Tinjau & Edit Data Warga" />
-  <img src="docs/screenshots/warga_6.jpg" width="180" alt="Status Meninggal Dunia" />
+  <img src="docs/screenshots/warga_1.jpg" width="165" alt="Direktori Data Warga Terurut KK (Palet Zamrud Asri)" />
+  <img src="docs/screenshots/warga_2.jpg" width="165" alt="Filter Status Kependudukan & Agama" />
+  <img src="docs/screenshots/warga_3.jpg" width="165" alt="Form Tambah Warga Baru (1 KK)" />
+  <img src="docs/screenshots/warga_4.jpg" width="165" alt="Form Tambah Warga Lama (KK Terdaftar)" />
+  <img src="docs/screenshots/warga_5.jpg" width="165" alt="Modal Tinjau & Edit Data Warga" />
+  <img src="docs/screenshots/warga_6.jpg" width="165" alt="Filter Warga Berstatus Meninggal Dunia" />
 </p>
 
-Tab **Data Warga** mengelola direktori penduduk RT 17 secara terpusat dengan struktur keluarga yang konsisten:
+*(Ditampilkan dalam palet **Zamrud Asri** — Tema Terang)*
 
-- **Urutan Baku Anggota KK (`sortKKMembers` & `v_residents_kk_ordered`):** Anggota dalam setiap KK selalu tersusun rapi mengikuti standar resmi: **`Kepala Keluarga → Istri/Suami → Anak → Menantu → Cucu → Orang Tua Laki-laki/Perempuan → Mertua → Famili Lain → Lainnya`**, diurutkan dari **tanggal lahir tertua ke termuda** di seluruh tampilan aplikasi dan dokumen export.
-- **Sortir Fleksibel & Filter Ringkas:** Pengguna dapat beralih cepat antara mode sortir **Urut KK & Tgl Lahir** atau **Urut Abjad A–Z**, dilengkapi pencarian **Nama, NIK, No. KK, Alamat, No. HP**, filter **Agama**, serta filter status (*Semua, Permanen, Kontrak, Kost, Tidak Aktif di RT 17, Pindah Domisili, Meninggal Dunia*).
-- **Pendaftaran Warga Baru (1 KK) & Warga Lama (KK Ada):** Memisahkan form input keluarga baru dari penambahan anggota baru pada KK terdaftar, dengan validasi hubungan keluarga lengkap.
-- **Tinjau, Edit & Proteksi NIK:** Alamat KK otomatis tersinkron ke tabel `households`; nomor NIK disensor otomatis bagi akun yang tidak memiliki izin `canUnmaskNik`.
+- **3.1 Direktori Terurut Baku & Mode Sortir (`warga_1.jpg`):** Seluruh anggota dalam 1 KK tersusun konsisten mengikuti standar **`Kepala Keluarga → Istri/Suami → Anak → Menantu → Cucu → Orang Tua → Mertua → Famili Lain → Lainnya`** dari tanggal lahir tertua ke termuda (`sortKKMembers` & view database `v_residents_kk_ordered` berkeamanan `security_invoker = true`), dengan opsi beralih ke **Urut Abjad A–Z**.
+- **3.2 Pencarian & Filter Multi-Kategori (`warga_2.jpg`, `warga_6.jpg`):** Pencarian nama, NIK, No. KK, alamat, dan nomor HP dipadukan dengan dropdown **Agama** dan **Status** (*Semua, Permanen, Kontrak, Kost, Tidak Aktif di RT 17, Pindah Domisili, Meninggal Dunia*).
+- **3.3 Pendaftaran Warga Baru & Tambah Anggota KK (`warga_3.jpg`, `warga_4.jpg`):** Memisahkan alur pembuatan KK baru beserta anggotanya dari penambahan anggota baru pada KK yang sudah tercatat.
+- **3.4 Tinjau, Sunting & Sensor NIK Otomatis (`warga_5.jpg`):** Pembaruan alamat otomatis tersinkron ke tabel `households`; tampilan nomor NIK otomatis disensor (`••••0004`) bagi akun yang tidak memegang izin `canUnmaskNik`.
 
 ---
 
-## 4. Tab Data KK & Iuran Tahunan + Tunggakan Lintas Tahun
+## 4. Tab 3 — Data KK & Iuran Tahunan
 
 <p align="center">
-  <img src="docs/screenshots/kk_1.jpg" width="180" alt="Daftar KK & Progres Kepatuhan Iuran" />
-  <img src="docs/screenshots/kk_2.jpg" width="180" alt="4 Kartu Filter Cepat KK & Iuran" />
-  <img src="docs/screenshots/kk_3.jpg" width="180" alt="Detail KK, Rincian Piutang & Tunggakan Manual" />
-  <img src="docs/screenshots/kk_4.jpg" width="180" alt="Catat Pembayaran & Cicilan Iuran" />
-  <img src="docs/screenshots/kk_5.jpg" width="180" alt="QRIS Layar Penuh DANA" />
-  <img src="docs/screenshots/kk_6.jpg" width="180" alt="Transfer Bank & Unggah Bukti" />
-  <img src="docs/screenshots/kk_7.jpg" width="180" alt="Status Janda & Tanpa Tagihan" />
+  <img src="docs/screenshots/kk_1.jpg" width="170" alt="Daftar KK & Progres Iuran Tahunan (Palet Koral Hangat)" />
+  <img src="docs/screenshots/kk_2.jpg" width="170" alt="Filter Cepat Menunggak & Piutang Lintas Tahun" />
+  <img src="docs/screenshots/kk_3.jpg" width="170" alt="Detail KK & Susunan Anggota Baku" />
+  <img src="docs/screenshots/kk_4.jpg" width="170" alt="Atur Tunggakan Manual Beda Tahun (2020+)" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/kk_5.jpg" width="190" alt="Modal Catat Pembayaran & Cicilan FIFO" />
+  <img src="docs/screenshots/kk_6.jpg" width="190" alt="QRIS Layar Penuh DANA Kecerahan 100%" />
+  <img src="docs/screenshots/kk_7.jpg" width="190" alt="Filter Kategori Khusus Janda (Wajib Rukem)" />
 </p>
 
-Tab **Data KK & Iuran** kini beroperasi penuh dengan **sistem tagihan tahunan (`010_annual_dues_and_manual_arrears.sql`)**:
+*(Ditampilkan dalam palet **Koral Hangat** — Tema Terang)*
 
-- **Aturan Iuran Wajib Tahunan (1×/Tahun per Kategori) & Cicilan Lintas Bulan:**
-  - Setiap KK wajib melunasi **4 kategori iuran tahunan** (*17 Agustus `Rp 30rb`*, *Keuangan Social `Rp 30rb`*, *Pembangunan + Fogging `Rp 36rb`*, dan *Rukem + Juru Kunci `Rp 42rb`* — total **`Rp 138.000/thn`**; kategori **Janda** hanya wajib *Rukem + Juru Kunci `Rp 42.000/thn`*; **Kost/Pindah/Meninggal** bebas tagihan).
-  - Tagihan otomatis dikonsolidasikan **1 tagihan per tahun per kategori (`period_month = 1`)**. Jika warga mencicil sebagian di bulan November lalu melanjutkan pembayaran di Desember, sisa kewajiban dan status **Sebagian** tetap terbawa utuh tanpa membuat tagihan ganda.
-- **Tunggakan Manual Beda Tahun & Akumulasi Rincian Piutang (`showManualArrearsModal`):**
-  - Petugas berwenang (`canManageManualArrears`) dapat membuka menu **Atur Tunggakan Manual** di Detail KK untuk mencatat atau menyesuaikan nominal tunggakan tahun-tahun sebelumnya (`>= 2020`) per kategori iuran.
-  - Kartu KK dan Detail KK menjabarkan **rincian piutang per tahun & per kategori** beserta akumulasi totalnya, tombol **Ingatkan WhatsApp** santun otomatis, serta pelunasan otomatis memotong tahun terlama lebih dulu (*FIFO*).
-  - Pergantian periode bulan (`‹` / `›`) otomatis berpindah tahun (`2026 ↔ 2027`), dan lencana kartu menampilkan **`LUNAS <Tahun>`** agar status tahun berjalan tetap akurat meski ada catatan tunggakan tahun lalu.
-- **Filter Cepat & Pembayaran QRIS Layar Penuh:** Tersedia 4 kartu filter cepat (**Wajib Penuh, Janda Rukem, Kost Bebas, Menunggak**), pencarian KK, QRIS layar penuh **DANA `085607686867` a.n. `FIBRIONO`** dengan kecerahan layar otomatis 100%, serta penguncian kategori otomatis khusus 4 petugas Bendahara RT.
+- **4.1 Navigasi Periode Lintas Tahun & 4 Kartu Filter Cepat (`kk_1.jpg`, `kk_2.jpg`, `kk_7.jpg`):**
+  - Menampilkan bar progres kepatuhan bayar, tombol pindah periode **`‹` / `›`** yang otomatis berganti tahun (`2026 ↔ 2027`), serta 4 filter cepat (**Wajib Penuh** `Rp 138.000/thn`, **Janda Rukem** `Rp 42.000/thn`, **Kost Bebas**, dan **Menunggak**).
+  - Status kartu membedakan **`LUNAS <Tahun>`**, **`SEBAGIAN`**, dan **`BELUM BAYAR`** lengkap dengan lencana akumulasi tunggakan lintas tahun.
+- **4.2 Detail KK, Pengingat WA & Tunggakan Manual Beda Tahun (`kk_3.jpg`, `kk_4.jpg`):**
+  - Menampilkan susunan anggota keluarga terurut baku, tombol **Edit No. KK**, **Rincian Piutang per Tahun & Kategori**, serta tombol **Ingatkan WhatsApp** santun otomatis.
+  - Petugas berizin `canManageManualArrears` dapat membuka **Atur Tunggakan Manual** untuk mencatat atau mengoreksi kewajiban historis tahun sebelumnya (`>= 2020`).
+- **4.3 Pembayaran Cicilan FIFO & QRIS Layar Penuh (`kk_5.jpg`, `kk_6.jpg`):**
+  - Menggunakan sistem **1 tagihan per tahun per kategori (`010_annual_dues_and_manual_arrears.sql`)**: pembayaran parsial/cicilan di bulan mana pun otomatis mengurangi saldo tahun berjalan atau tahun terlama lebih dulu (*FIFO*), mewajibkan lampiran foto bukti pembayaran, serta menyediakan **QRIS Layar Penuh DANA** yang menaikkan kecerahan layar HP ke 100% secara otomatis.
 
 ---
 
-## 5. Tab Cash RT, Grafik Donat & Laporan Per Petugas
+## 5. Tab 4 — Cash RT & Pelaporan Petugas
 
 <p align="center">
-  <img src="docs/screenshots/cash_1.jpg" width="180" alt="Ringkasan Saldo & KPI Cash RT" />
-  <img src="docs/screenshots/cash_2.jpg" width="180" alt="Donat Chart Material You" />
-  <img src="docs/screenshots/cash_3.jpg" width="180" alt="Tooltip Luar Donat Chart" />
-  <img src="docs/screenshots/cash_4.jpg" width="180" alt="Riwayat Transaksi & Paginasi" />
-  <img src="docs/screenshots/cash_5.jpg" width="180" alt="Detail & Bukti Transaksi" />
-  <img src="docs/screenshots/cash_6.jpg" width="180" alt="Catat Pemasukan 10 Kategori" />
-  <img src="docs/screenshots/cash_7.jpg" width="180" alt="Catat Pengeluaran & Nota" />
-  <img src="docs/screenshots/cash_8.jpg" width="180" alt="Approval Pending Kas RT" />
+  <img src="docs/screenshots/cash_1.jpg" width="170" alt="Saldo Kas Approved & KPI (Palet Violet Senja)" />
+  <img src="docs/screenshots/cash_2.jpg" width="170" alt="Grafik Donat Material You & Filter Riwayat" />
+  <img src="docs/screenshots/cash_3.jpg" width="170" alt="Laporan Kas Bulanan & Per Petugas (PDF)" />
+  <img src="docs/screenshots/cash_4.jpg" width="170" alt="Riwayat Transaksi Detail & Paginasi 10 Item" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/cash_5.jpg" width="190" alt="Detail Transaksi & Foto Bukti Nota" />
+  <img src="docs/screenshots/cash_6.jpg" width="190" alt="Catat Pemasukan Kas (10 Kategori)" />
+  <img src="docs/screenshots/cash_7.jpg" width="190" alt="Catat Pengeluaran Kas & Lampiran Nota" />
 </p>
 
-Tab **Cash RT** mengelola arus kas masuk/keluar secara transparan, akurat, dan teraudit:
+*(Ditampilkan dalam palet **Violet Senja** — Tema Terang)*
 
-- **Kartu Saldo, KPI & Grafik Donat Selaras Material You:** Menampilkan **Saldo Kas Saat Ini (Approved)**, **Pemasukan**, **Pengeluaran**, **Saldo Awal** (dengan tombol *Edit* khusus izin `canEditOpening`), **Tunggakan**, serta **Grafik Donat seluruh kategori pemasukan** berpalet warna sesuai tema aktif dengan *tooltip* di sisi luar irisan agar angka tengah selalu terbaca jelas.
-- **Laporan Kas Bulanan & Per Petugas + Export PDF (`buildMonthlyCashOfficerReport`):**
-  - Menyajikan perbandingan **Bulan Ini vs Bulan Sebelumnya (Month-over-Month)** untuk pemasukan, pengeluaran, dan surplus bersih, lengkap dengan rincian per kategori dan daftar warga pembayar.
-  - **Cakupan Petugas Otomatis Terpilih:** Saat dibuka oleh salah satu dari **4 Bendahara RT** (*Novan Hermawan, Ahmad Abin, A. Teguh Purwanto, Jodik Purwanto*) maupun pengurus lain, laporan langsung menyorot cakupan tugas dan daftar setoran warga milik akun yang login, siap ekspor ke **PDF cetak**.
-- **Riwayat Transaksi Detail & Approval Kas:** Pencarian teks *anti-loncat scroll*, filter Status (**Semua, Pending, Approved, Rejected**), Tipe, dan Petugas dengan paginasi 10 item per halaman, foto nota dari Supabase Storage, **10 kategori pemasukan tambahan**, serta alur persetujuan (*ACC / Tolak*) dengan dialog konfirmasi *frosted-blur*.
+- **5.1 Kartu Saldo & Edit Saldo Awal (`cash_1.jpg`):** Memantau **Saldo Kas Saat Ini (Approved)**, **Pemasukan**, **Pengeluaran**, **Saldo Awal** (dengan tombol *Edit* khusus izin `canEditOpening`), dan **Tunggakan**.
+- **5.2 Grafik Donat Material You (`cash_2.jpg`):** Menampilkan seluruh kategori pemasukan beserta persentasenya dengan *tooltip* luar agar angka total di tengah tetap bersih terbaca.
+- **5.3 Laporan Kas Bulanan & Per Petugas PDF (`cash_3.jpg`):** Menyajikan perbandingan **Month-over-Month (MoM)**, rincian pemasukan/pengeluaran per kategori, rekap tugas **4 Bendahara RT** & pengurus (otomatis memilih cakupan sesuai akun login), serta ekspor **PDF siap cetak**.
+- **5.4 Riwayat Transaksi, Catat Kas & Approval (`cash_4.jpg` – `cash_7.jpg`):** Pencarian teks anti-loncat scroll, filter status (**Semua, Pending, Approved, Rejected**), tipe, dan petugas berpaginasi 10 item; pencatatan **10 kategori pemasukan tambahan** atau pengeluaran; serta peninjauan foto nota dengan dialog konfirmasi *ACC / Tolak*.
 
 ---
 
-## 6. Tab Lainnya, Tema Material You & Laporan
+## 6. Tab 5 — Lainnya, Tema Material You & Update In-App
 
 <p align="center">
-  <img src="docs/screenshots/lain_1.jpg" width="180" alt="Profil & Pengaturan Akun" />
-  <img src="docs/screenshots/lain_2.jpg" width="180" alt="Laporan Keuangan 1 Bulan" />
-  <img src="docs/screenshots/lain_3.jpg" width="180" alt="Preview & Share Multi-PNG & PDF" />
-  <img src="docs/screenshots/lain_4.jpg" width="180" alt="Rekap Kas Tahunan Fokus Bulan Aktif" />
-  <img src="docs/screenshots/lain_5.jpg" width="180" alt="Import & Export Excel Warga" />
-  <img src="docs/screenshots/lain_6.jpg" width="180" alt="Pilih Mode Gelap & 4 Palet Material You" />
-  <img src="docs/screenshots/lain_7.jpg" width="180" alt="Cek Update & Rilis APK" />
+  <img src="docs/screenshots/lain_1.jpg" width="170" alt="Edit Profil Akun Pengguna" />
+  <img src="docs/screenshots/lain_2.jpg" width="170" alt="Preview & Share Laporan Multi-PNG 1 Bulan" />
+  <img src="docs/screenshots/lain_3.jpg" width="170" alt="Rekap Kas Tahunan, Import/Export Excel & Audit" />
+  <img src="docs/screenshots/lain_8.jpg" width="170" alt="Kartu Info Aplikasi v1.17.0 & Update Dalam Aplikasi" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/lain_4.jpg" width="190" alt="Tema Terang — Palet Samudra RT 17" />
+  <img src="docs/screenshots/lain_5.jpg" width="190" alt="Tema Gelap — Palet Zamrud Asri" />
+  <img src="docs/screenshots/lain_6.jpg" width="190" alt="Tema Gelap — Palet Violet Senja" />
+  <img src="docs/screenshots/lain_7.jpg" width="190" alt="Tema Terang — Palet Koral Hangat" />
 </p>
 
-Tab **Lainnya** menghimpun pengaturan personalisasi tampilan, laporan keuangan, ekspor/impor massal, dan pembaruan aplikasi:
-
-- **Pengaturan Tema Material You & Mode Gelap Dinamis:**
-  - **3 Mode Tampilan:** **Terang**, **Gelap**, dan **Otomatis** (mengikuti preferensi perangkat Android/browser).
-  - **4 Pilihan Palet Warna Material You:** **Samudra RT 17** (biru tegas), **Zamrud Asri** (hijau sejuk), **Violet Senja** (ungu ekspresif), dan **Koral Hangat** (oranye ramah), lengkap dengan pratinjau *swatch* warna dan pemilih bahasa ringkas (**`ID` / `EN` / `JV`**).
-- **Laporan Keuangan 1 Bulan (Multi-PNG & PDF Lengkap):** Merangkum Saldo Awal, seluruh kategori pemasukan (`allIncomeByCat`), pengeluaran, Saldo Akhir, dan daftar lengkap KK belum lunas, siap dibagikan sebagai **Multi-PNG tajam (16 KK/halaman)** maupun **PDF A4 multi-halaman** (dikontrol hak akses `canExportReports`).
-- **Rekap Kas Tahunan, Import/Export Excel & Kesehatan Sistem:** Menyorot **Bulan Aktif** di bagian teratas rekap tahunan, menyediakan **Template Excel, Export Global, dan Import Massal Warga**, riwayat aktivitas audit berpaginasi, serta pemeriksaan pembaruan APK otomatis dari **GitHub Releases**.
+- **6.1 Profil Akun & Pengaturan Sandi (`lain_1.jpg`):** Pembaruan nama tampilan, nomor WhatsApp, jabatan, foto avatar, dan penggantian kata sandi mandiri.
+- **6.2 Laporan Keuangan 1 Bulan & Rekap Kas Tahunan (`lain_2.jpg`, `lain_3.jpg`):** Preview dan ekspor laporan kas bulanan menjadi **Multi-PNG tajam (16 KK/halaman)** maupun **PDF A4 multi-halaman**, lengkap dengan daftar KK belum lunas, disertai Rekap Kas Tahunan 12 bulan yang menyorot **Bulan Aktif** di posisi teratas.
+- **6.3 Import/Export Excel & Log Aktivitas (`lain_3.jpg`):** Unduh template Excel resmi, Export Global data warga terurut baku, Import massal `.xlsx/.csv` anti-duplikat, serta riwayat aktivitas audit berpaginasi.
+- **6.4 Tema Material You: 4 Palet Warna & Mode Terang/Gelap (`lain_4.jpg` – `lain_7.jpg`):**
+  - Mendukung 3 mode (**Terang**, **Gelap**, **Otomatis Sistem**) serta 4 palet warna (*Samudra RT 17*, *Zamrud Asri*, *Violet Senja*, *Koral Hangat*) + 3 pilihan bahasa (`ID / EN / JV`) dan pengaman dropdown anti-salah pencet saat *scroll*.
+- **6.5 Info Aplikasi & Pengunduh APK Dalam Aplikasi (`lain_8.jpg`):**
+  - Menekan **Unduh APK Terbaru** atau **Cek Update Aplikasi** mengunduh file `.apk` terbaru **langsung di dalam aplikasi** dengan *progress bar* persentase & ukuran MB hingga pemasangan otomatis (`PackageInstaller`) tanpa mengalihkan pengguna keluar ke browser, serta mendeteksi pembaruan build baru meski masih menggunakan versi `v1.17.0`.
 
 ---
 
 ## 7. Panel Khusus Developer & 14 Hak Akses Granular
 
 <p align="center">
-  <img src="docs/screenshots/dev_1.jpg" width="180" alt="Panel Khusus Developer" />
-  <img src="docs/screenshots/dev_2.jpg" width="180" alt="Daftar Akun User Login" />
-  <img src="docs/screenshots/dev_3.jpg" width="180" alt="Tambah User & 14 Hak Akses Centang" />
-  <img src="docs/screenshots/dev_4.jpg" width="180" alt="Edit User & Custom Permissions" />
-  <img src="docs/screenshots/dev_5.jpg" width="180" alt="Konfirmasi Blur Hapus User" />
-  <img src="docs/screenshots/dev_6.jpg" width="180" alt="Ubah Password & Reset Bulan" />
+  <img src="docs/screenshots/dev_1.jpg" width="170" alt="Panel Khusus Developer SUPERUSER" />
+  <img src="docs/screenshots/dev_2.jpg" width="170" alt="Daftar Akun User Login & Status Izin" />
+  <img src="docs/screenshots/dev_3.jpg" width="170" alt="Form Tambah Akun User Baru" />
+  <img src="docs/screenshots/dev_4.jpg" width="170" alt="14 Centang Hak Akses Granular" />
+  <img src="docs/screenshots/dev_5.jpg" width="170" alt="Modal Ubah Password User" />
+  <img src="docs/screenshots/dev_6.jpg" width="170" alt="Reset Data Periode Berjalan" />
 </p>
 
-Khusus akun `developer@wargakita.id`, tersedia **Panel Khusus Developer (`SUPERUSER`)** untuk kendali sistem dan otorisasi penuh:
+Khusus akun `developer@wargakita.id`, tersedia **Panel Khusus Developer (`SUPERUSER`)**:
 
-- **Kelola User Login (`005_developer_user_management.sql`):** Menambah, mengedit, mencari, mengganti password sementara, hingga menghapus akun (`developer_list_users`, `developer_create_user`, `developer_update_user`, `developer_delete_user`) secara aman tanpa kendala *foreign key*.
-- **14 Centang Hak Akses Granular (`custom_permissions` & `010`):** Developer dapat mengatur izin spesifik per akun dan langsung tersinkron hingga level database RLS (`public.user_has_permission()`):
-  1. Lihat Data Warga & KK (`canViewWarga`)
-  2. Tambah Warga Baru (`canAddWarga`)
-  3. Edit Data Warga & Alamat (`canEditWarga`)
-  4. Hapus Data Warga (`canDeleteWarga`)
-  5. Catat Pembayaran Iuran (`canPay`)
-  6. Catat Transaksi Kas RT (`canCash`)
-  7. Approval Kas / ACC & Tolak (`canApprove`)
-  8. Edit Saldo Awal Kas (`canEditOpening`)
-  9. Kelola Agenda Resmi RT (`canEditCalendar`)
-  10. Siarkan Info Warga Real-Time (`canBroadcastInfo`)
-  11. Edit Kartu Ucapan Ulang Tahun (`canEditBirthdayCard`)
-  12. Atur Tunggakan Manual Beda Tahun (`canManageManualArrears`)
-  13. Unduh Laporan PDF / PNG / Excel (`canExportReports`)
-  14. Lihat NIK Penuh Tanpa Sensor (`canUnmaskNik`)
-- **Reset Data Periode Berjalan:** Fitur pengujian cepat untuk mereset data periode berjalan ke nol bila diperlukan oleh Developer.
+- **7.1 Kelola User Login & 14 Centang Izin Granular (`dev_1.jpg` – `dev_4.jpg`):**
+  - Pembuatan, penyuntingan, dan penghapusan akun aman lintas tabel (`developer_list_users`, `developer_create_user`, `developer_update_user`, `developer_delete_user`).
+  - Pengaturan **14 centang izin per akun (`custom_permissions`)** yang langsung ditegakkan hingga level PostgreSQL RLS (`public.user_has_permission()`):
+    1. Lihat Data Warga & KK (`canViewWarga`)
+    2. Tambah Warga Baru (`canAddWarga`)
+    3. Edit Data Warga & Alamat (`canEditWarga`)
+    4. Hapus Data Warga (`canDeleteWarga`)
+    5. Catat Pembayaran Iuran (`canPay`)
+    6. Catat Transaksi Kas RT (`canCash`)
+    7. Approval Kas / ACC & Tolak (`canApprove`)
+    8. Edit Saldo Awal Kas (`canEditOpening`)
+    9. Kelola Agenda Resmi RT (`canEditCalendar`)
+    10. Siarkan Info Warga Real-Time (`canBroadcastInfo`)
+    11. Edit Kartu Ucapan Ulang Tahun (`canEditBirthdayCard`)
+    12. Atur Tunggakan Manual Beda Tahun (`canManageManualArrears`)
+    13. Unduh Laporan PDF / PNG / Excel (`canExportReports`)
+    14. Lihat NIK Penuh Tanpa Sensor (`canUnmaskNik`)
+- **7.2 Ubah Password User & Reset Periode (`dev_5.jpg`, `dev_6.jpg`):** Fitur pemulihan sandi darurat akun lain dan reset data transaksi periode berjalan untuk keperluan uji coba sistem.
 
 ---
 
@@ -201,10 +257,11 @@ Khusus akun `developer@wargakita.id`, tersedia **Panel Khusus Developer (`SUPERU
 *(Seluruh izin bawaan di atas dapat dikustomisasi per akun oleh **Developer Admin** melalui **14 centang `custom_permissions`** di menu **Kelola User Login**).*
 
 ### Arsitektur Teknis
-1. **Autentikasi, RLS & Migrasi Terstruktur (`supabase/005`–`010`):** Login Supabase Auth + proteksi *Row Level Security (RLS)* yang membaca `user_has_permission()`, view berkeamanan `security_invoker = true` (`v_residents_kk_ordered`), serta konsolidasi tagihan tahunan (`ensure_period_dues` & `upsert_manual_household_due`).
-2. **Backend Express & WebSocket (`server.ts`):** Menyajikan aplikasi Vite/SPA sekaligus kanal WebSocket `/ws` dan endpoint `/api/notifications/*` untuk penyiaran notifikasi lingkungan secara *real-time* beserta pelacakan jumlah perangkat aktif.
-3. **Asisten AI Hibrida & Offline Assets:** Supabase Edge Function `nawak-ai` + *silent fallback* NLU 5 lapis lokal + OCR & pembaca dokumen lokal (`Tesseract.js`, `PDF.js`, `Mammoth.js`, `SheetJS`, `jsPDF`) + 7 audio ElevenLabs MP3 *offline*.
-4. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 29`, `versionName = "1.17.0"`), menandatanganinya dengan *keystore* rilis dari GitHub Secrets, dan mempublikasikan rilis ke **GitHub Releases**.
+1. **Autentikasi, RLS & Migrasi Terstruktur (`supabase/005`–`010`):** Login Supabase Auth + proteksi *Row Level Security (RLS)* melalui `user_has_permission()`, view berkeamanan `security_invoker = true` (`v_residents_kk_ordered`), dan konsolidasi tagihan tahunan (`ensure_period_dues`, `upsert_manual_household_due`).
+2. **Backend Express & WebSocket (`server.ts` + Supabase Realtime):** Kanal WebSocket `/ws` dan endpoint `/api/notifications/*` + saluran `wk_realtime_dashboard_v1` untuk siaran info lingkungan serta sinyal pembaruan APK ke perangkat aktif.
+3. **Updater APK Native Dalam Aplikasi (`MainActivity.kt` & `UpdateCheckReceiver.kt`):** Pengunduhan APK berbasis `HttpURLConnection` + pelaporan progres *real-time* ke WebView + instalasi via `FileProvider` & `REQUEST_INSTALL_PACKAGES`, serta deteksi pembaruan build terbaru berdasarkan `BuildConfig.BUILD_EPOCH_MS`.
+4. **Asisten AI Hibrida & Offline Assets:** Supabase Edge Function `nawak-ai` + *silent fallback* NLU 5 lapis lokal + OCR & pembaca dokumen lokal (`Tesseract.js`, `PDF.js`, `Mammoth.js`, `SheetJS`, `jsPDF`) + 7 audio ElevenLabs MP3 *offline*.
+5. **Build & Rilis APK Otomatis:** GitHub Actions (`.github/workflows/build-apk.yml`) membangun APK Android (`versionCode = 29`, `versionName = "1.17.0"`), menandatanganinya dengan *keystore* rilis, dan mempublikasikan rilis ke **GitHub Releases**.
 
 ---
 

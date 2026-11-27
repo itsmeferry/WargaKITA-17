@@ -30,7 +30,13 @@
 
 ### Panel Developer: 14 Hak Akses Granular & Sinkronisasi RLS
 - **Ekspansi Izin Granular (`PERM_DEFS` & `010`):** Menambah 4 izin baru di menu **Kelola User Login** sehingga menjadi **14 centang hak akses granular** (`canViewWarga`, `canAddWarga`, `canEditWarga`, `canDeleteWarga`, `canPay`, `canCash`, `canApprove`, `canEditOpening`, `canEditCalendar`, `canBroadcastInfo`, `canEditBirthdayCard`, `canManageManualArrears`, `canExportReports`, `canUnmaskNik`), tersinkronisasi penuh dengan fungsi `public.user_has_permission()` dan RLS PostgreSQL.
-- **Build Android (`v1.17.0`):** Menaikkan `versionCode = 29`, `versionName = "1.17.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
+
+### Pengunduh APK Dalam Aplikasi, Deteksi Build Ulang & Perbaikan Dropdown
+- **Unduh & Pasang Pembaruan Langsung di Dalam APK (`MainActivity.kt` & `AndroidManifest.xml`):** Mengganti pengalihan ke browser eksternal saat menekan **Unduh & Pasang Update** maupun tombol **Unduh APK Terbaru** dengan pengunduh native Android (`AndroidBridge.downloadAndInstallApk` + `REQUEST_INSTALL_PACKAGES` + `FileProvider`), lengkap dengan **progress bar persentase (`0%–100%`) dan ukuran MB real-time**, lalu otomatis memicu pemasang paket Android (`PackageInstaller`) begitu unduhan selesai.
+- **Deteksi Update & Notifikasi Otomatis pada Versi Sama (`v1.17.0`):** `UpdateCheckReceiver.kt` dan `checkAppUpdate()` kini membaca stempel waktu kompilasi (`BuildConfig.BUILD_EPOCH_MS` / `APP_BUILD_EPOCH`) terhadap stempel waktu aset APK terbaru di GitHub Releases (`updated_at`), serta menerima sinyal siaran pembaruan langsung (`isUpdateSignal`) sehingga build perbaikan terbaru pada versi `v1.17.0` tetap mengirim notifikasi update ke perangkat warga. Notifikasi update kini langsung membuka dialog pembaruan di dalam aplikasi alih-alih melempar ke browser.
+- **Pelindung Dropdown Anti-Salah Pencet Saat Scroll (`setupCustomSelectPickers` & `openBlurSelectPicker`):** Menghapus pemicu popup pada `touchstart`/`mousedown`, menambahkan ambang geser sentuhan (`> 8px`), jeda pendinginan pasca-gulir (`260ms`), dan pengaman sentuh ganda pada seluruh dropdown aplikasi agar tidak mudah terbuka tidak sengaja ketika pengguna sedang menggulir halaman.
+- **Pembaruan Dokumentasi & 49 Screenshot Terbaru (`README.md` & `docs/screenshots/`):** Menyusun ulang **Daftar Isi** terperinci per menu dan sub-menu beserta kegunaannya, memisahkan panduan lengkap **NawakAI** beserta hasil eksekusi perintah langsung, serta mengganti seluruh gambar dengan 49 tangkapan layar terbaru lintas 4 palet warna Material You & Dark Mode tanpa duplikat.
+- **Build Android (`v1.17.0`):** Mempertahankan `versionCode = 29`, `versionName = "1.17.0"` di `android/app/build.gradle.kts`, `APP_VERSION` di HTML, dan `.github/workflows/build-apk.yml`.
 
 ## [1.16.1] — 2026-11-24 (`versionCode = 28`)
 

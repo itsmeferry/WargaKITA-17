@@ -997,6 +997,7 @@ function saveProfileExtra(uid, obj) {
 }
 
 const APP_VERSION = "v1.17.0";
+const APP_BUILD_EPOCH = 1795740518516;
 const GITHUB_REPO_URL = "https://github.com/itsmeferry/WargaKITA-17";
 const GITHUB_RELEASE_URL = "https://github.com/itsmeferry/WargaKITA-17/releases/latest";
 const GITHUB_API_LATEST_URL = "https://api.github.com/repos/itsmeferry/WargaKITA-17/releases/latest";
@@ -1697,11 +1698,14 @@ function openBlurSelectPicker(sel) {
   }
   if (!title) title = "Pilih Opsi";
 
+  const openedAt = Date.now();
+  window.__wkLastBlurSelectTs = openedAt;
+
   const ov = document.createElement("div");
   ov.id = "wkBlurSelectOverlay";
   ov.className = "fixed inset-0 z-[100] wk-blur-backdrop flex items-center justify-center p-4";
   ov.innerHTML = `
-    <div class="wk-blur-sheet w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
+    <div class="wk-blur-sheet w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden transition-transform duration-150">
       <div class="px-4 py-3 border-b border-slate-200/70 dark:border-slate-700/60 flex items-center justify-between">
         <p class="text-xs font-bold text-slate-800 truncate">${title}</p>
         <button type="button" id="wkBlurSelClose" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-xs font-bold">✕</button>
@@ -1722,10 +1726,14 @@ function openBlurSelectPicker(sel) {
     </div>
   `;
   document.body.appendChild(ov);
-  ov.onclick = (e) => { if (e.target === ov) ov.remove(); };
+  ov.onclick = (e) => {
+    if (Date.now() - openedAt < 220) return;
+    if (e.target === ov) ov.remove();
+  };
   document.getElementById("wkBlurSelClose").onclick = () => ov.remove();
   ov.querySelectorAll("[data-blur-opt]").forEach(btn => {
     btn.onclick = () => {
+      if (Date.now() - openedAt < 180) return;
       const idx = Number(btn.getAttribute("data-blur-opt"));
       const chosen = opts[idx];
       if (chosen) {
@@ -1737,28 +1745,63 @@ function openBlurSelectPicker(sel) {
   });
 }
 
+if (!window.__wkSelectScrollGuardInit) {
+  window.__wkSelectScrollGuardInit = true;
+  window.__wkLastScrollTs = 0;
+  window.__wkLastBlurSelectTs = 0;
+  document.addEventListener("scroll", () => { window.__wkLastScrollTs = Date.now(); }, { passive: true, capture: true });
+}
+
 function setupCustomSelectPickers(root = document) {
   root.querySelectorAll("select").forEach(sel => {
     if (sel.dataset.wkBlurBound) return;
     sel.dataset.wkBlurBound = "1";
-    sel.addEventListener("mousedown", (e) => {
-      if (sel.disabled) return;
-      e.preventDefault();
-      sel.blur();
-      openBlurSelectPicker(sel);
-    });
+    let tStartX = 0, tStartY = 0, tStartTime = 0, tMoved = false, lastTouchEnd = 0;
+
     sel.addEventListener("touchstart", (e) => {
       if (sel.disabled) return;
+      const pt = e.touches && e.touches[0];
+      if (!pt) return;
+      tStartX = pt.clientX;
+      tStartY = pt.clientY;
+      tStartTime = Date.now();
+      tMoved = false;
+    }, { passive: true });
+
+    sel.addEventListener("touchmove", (e) => {
+      if (tMoved) return;
+      const pt = e.touches && e.touches[0];
+      if (!pt) return;
+      if (Math.hypot(pt.clientX - tStartX, pt.clientY - tStartY) > 8) {
+        tMoved = true;
+        window.__wkLastScrollTs = Date.now();
+      }
+    }, { passive: true });
+
+    sel.addEventListener("touchend", () => {
+      lastTouchEnd = Date.now();
+    }, { passive: true });
+
+    sel.addEventListener("mousedown", (e) => {
+      if (sel.disabled) return;
+      // Suppress native Android/browser select spinner without blocking touch-scroll
       e.preventDefault();
       sel.blur();
-      openBlurSelectPicker(sel);
-    }, { passive: false });
+    });
+
     sel.addEventListener("click", (e) => {
       if (sel.disabled) return;
       e.preventDefault();
       e.stopPropagation();
       sel.blur();
+      const now = Date.now();
+      if (tMoved) { tMoved = false; return; }
+      if (lastTouchEnd && (now - tStartTime > 650) && (now - lastTouchEnd < 120)) return;
+      if (now - (window.__wkLastScrollTs || 0) < 260) return;
+      if (now - (window.__wkLastBlurSelectTs || 0) < 260) return;
+      openBlurSelectPicker(sel);
     });
+
     sel.addEventListener("focus", () => { if (!sel.disabled) sel.blur(); });
   });
 }
@@ -2117,6 +2160,9 @@ function handleIncomingNeighborhoodNotif(item, silent = false) {
       try { window.AndroidBridge.showNotification(`WargaKITA 17 • ${item.title}`, item.body || ""); } catch (_) {}
     } else if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
       try { new Notification(`WargaKITA 17 • ${item.title}`, { body: item.body || "" }); } catch (_) {}
+    }
+    if (item.meta && item.meta.isUpdateSignal) {
+      setTimeout(() => { try { checkAppUpdate(false); } catch (_) {} }, 600);
     }
   }
 }
@@ -4226,7 +4272,7 @@ function renderLainnya() {
         </div>
         ${state.updateInfo ? `<div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2.5 text-xs"><div class="flex items-center gap-2 font-semibold text-emerald-800 min-w-0">${IC.spark("w-4 h-4 shrink-0")}<span class="truncate">Versi baru <strong>${state.updateInfo.version}</strong> tersedia!</span></div><button id="openUpdateModalBtn" type="button" class="px-3 py-1 rounded-xl bg-emerald-600 text-white font-semibold shrink-0">Lihat</button></div>` : ''}
         <div class="grid grid-cols-1 gap-2">
-          <a href="${state.updateInfo ? state.updateInfo.downloadUrl : GITHUB_RELEASE_URL}" target="_blank" rel="noopener noreferrer" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2"><span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} ${tr("dl_apk")}</span> (${state.updateInfo ? state.updateInfo.version : 'GitHub Release'})</a>
+          <button id="directDownloadApkBtn" type="button" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2"><span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} ${tr("dl_apk")}</span> (${state.updateInfo ? state.updateInfo.version : APP_VERSION})</button>
           <button id="checkUpdateManualBtn" type="button" class="w-full h-10 rounded-2xl m3-tonal-surface text-slate-700 text-xs font-semibold hover:opacity-90"><span class="inline-flex items-center justify-center gap-1.5">${IC.refresh("w-3.5 h-3.5")} ${tr("check_upd")}</span></button>
         </div>
       </div>
@@ -4502,19 +4548,78 @@ function compareVersions(v1, v2) {
   return 0;
 }
 
+window.wkApkDlState = { active: false, assetStamp: "" };
+window.wkOnApkDownloadProgress = function(status, pct, downloadedBytes, totalBytes, message) {
+  const wrap = document.getElementById("wkApkDlProgressWrap");
+  const bar = document.getElementById("wkApkDlBar");
+  const pctEl = document.getElementById("wkApkDlPct");
+  const stEl = document.getElementById("wkApkDlStatus");
+  const btn = document.getElementById("wkStartApkUpdateBtn");
+  const fmtMb = (b) => b > 0 ? `${(b / (1024 * 1024)).toFixed(1)} MB` : "";
+  if (wrap) wrap.classList.remove("hidden");
+  const p = Math.max(0, Math.min(100, Number(pct) || 0));
+  if (bar) bar.style.width = `${p}%`;
+  if (pctEl) pctEl.textContent = `${p}%`;
+  if (status === "starting" || status === "downloading") {
+    window.wkApkDlState.active = true;
+    if (btn) { btn.disabled = true; btn.classList.add("opacity-70"); btn.innerHTML = `Mengunduh Pembaruan (${p}%)...`; }
+    const sizeLabel = totalBytes > 0 ? ` (${fmtMb(downloadedBytes)} / ${fmtMb(totalBytes)})` : (downloadedBytes > 0 ? ` (${fmtMb(downloadedBytes)})` : "");
+    if (stEl) stEl.textContent = `Mengunduh APK langsung di dalam aplikasi${sizeLabel}`;
+  } else if (status === "installing") {
+    window.wkApkDlState.active = false;
+    if (window.wkApkDlState.assetStamp) {
+      try { localStorage.setItem("wk_applied_asset_stamp", window.wkApkDlState.assetStamp); } catch (_) {}
+    }
+    if (bar) bar.style.width = "100%";
+    if (pctEl) pctEl.textContent = "100%";
+    if (stEl) stEl.textContent = "Unduhan selesai! Membuka pemasang APK Android...";
+    if (btn) { btn.disabled = false; btn.classList.remove("opacity-70"); btn.innerHTML = `${IC.download("w-4 h-4")} Pasang Ulang APK`; }
+  } else if (status === "permission") {
+    window.wkApkDlState.active = false;
+    if (stEl) stEl.textContent = message || "Izinkan pemasangan APK di Pengaturan Android, unduhan akan lanjut otomatis.";
+    if (btn) { btn.disabled = false; btn.classList.remove("opacity-70"); btn.innerHTML = `${IC.download("w-4 h-4")} Lanjutkan Unduh & Pasang`; }
+  } else if (status === "error") {
+    window.wkApkDlState.active = false;
+    if (stEl) stEl.textContent = message || "Gagal mengunduh pembaruan APK. Ketuk tombol untuk mencoba lagi.";
+    if (btn) { btn.disabled = false; btn.classList.remove("opacity-70"); btn.innerHTML = `${IC.download("w-4 h-4")} Coba Unduh Lagi`; }
+    showToast(message || "Gagal mengunduh update APK.");
+  }
+};
+
+function startInAppApkUpdate(info) {
+  if (!info || !info.downloadUrl) return;
+  window.wkApkDlState.assetStamp = info.assetStamp || "";
+  if (window.AndroidBridge && typeof window.AndroidBridge.downloadAndInstallApk === "function") {
+    window.wkOnApkDownloadProgress("starting", 2, 0, 0, "Menyiapkan unduhan APK...");
+    try {
+      window.AndroidBridge.downloadAndInstallApk(info.downloadUrl, info.version || APP_VERSION);
+    } catch (err) {
+      window.wkOnApkDownloadProgress("error", 0, 0, 0, err?.message || "Gagal memulai unduhan APK.");
+    }
+    return;
+  }
+  const a = document.createElement("a");
+  a.href = info.downloadUrl;
+  a.download = `WargaKITA-RT17-${info.version || APP_VERSION}.apk`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 function showUpdateAvailableModal(info) {
   if (!info) return;
+  const isSameVerUpdate = compareVersions(info.version, APP_VERSION) === 0;
   openModal(`
-    <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between">
         <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Wajib Update Aplikasi</span>
-        <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[#1d4ed8] text-[10px] font-bold">${info.version}</span>
+        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1d4ed8] text-[10px] font-bold">${info.version}${isSameVerUpdate ? ' • Pembaruan Build' : ''}</span>
       </div>
       <div>
-        <h3 class="text-base font-bold text-slate-900">Versi Baru WargaKITA (${info.version}) Tersedia</h3>
-        <p class="text-xs text-slate-500 mt-1">Versi terpasang saat ini: <strong>${APP_VERSION}</strong>. Demi kelancaran &amp; keamanan data RT 17, seluruh pengguna diwajibkan memperbarui aplikasi ke versi terbaru.</p>
+        <h3 class="text-base font-bold text-slate-900">${isSameVerUpdate ? `Pembaruan Terbaru WargaKITA (${info.version}) Tersedia` : `Versi Baru WargaKITA (${info.version}) Tersedia`}</h3>
+        <p class="text-xs text-slate-500 mt-1">Versi terpasang saat ini: <strong>${APP_VERSION}</strong>. Demi kelancaran &amp; keamanan data RT 17, pembaruan akan diunduh dan dipasang langsung di dalam aplikasi.</p>
       </div>
-      <div class="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 space-y-2 text-xs max-h-52 overflow-y-auto">
+      <div class="p-3.5 rounded-2xl m3-tonal-surface space-y-2 text-xs max-h-52 overflow-y-auto">
         <p class="font-bold text-[#1d4ed8] flex items-center gap-1.5">${IC.spark("w-3.5 h-3.5")} Apa yang Baru di ${info.version}</p>
         ${(() => {
           if (info.notes && info.notes.trim()) {
@@ -4532,58 +4637,79 @@ function showUpdateAvailableModal(info) {
               }).join("");
             return `<div class="text-slate-700 space-y-1 leading-relaxed">${formatted}</div>`;
           }
-          return `
-            <div class="space-y-1.5 text-slate-700 leading-relaxed">
-              <div class="flex items-start gap-1.5"><span class="text-[#1d4ed8] font-bold">&bull;</span><span><strong>Update / Fitur Baru:</strong> NawakAI 6 ekspresi lucu + efek suara unik + suara Jawa otomatis, timeline berpikir ala Gemini, memori chat per user, &amp; Scan KK/PDF lokal tanpa kuota API.</span></div>
-              <div class="flex items-start gap-1.5"><span class="text-emerald-600 font-bold">&bull;</span><span><strong>Diperbaiki:</strong> Kartu Edit Profil pengguna, 4 akun Bendahara otomatis terkunci sesuai tugas, notifikasi Pending Approval 1 jam sekali, &amp; Wajib Update.</span></div>
-              <div class="flex items-start gap-1.5"><span class="text-rose-600 font-bold">&bull;</span><span><strong>Fix Bugs:</strong> Responsif terhadap keyboard Android, sinkronisasi edit alamat ke Data KK, lampiran ditahan sebelum kirim, &amp; gelembung NawakAI ikut bergerak.</span></div>
-            </div>
-          `;
+          return `<p class="text-slate-700">Pembaruan stabilitas sistem, keamanan, dan peningkatan antarmuka WargaKITA RT 17.</p>`;
         })()}
       </div>
+      <div id="wkApkDlProgressWrap" class="hidden p-3.5 rounded-2xl m3-tonal-surface space-y-2">
+        <div class="flex items-center justify-between text-[11px] font-bold text-slate-700">
+          <span id="wkApkDlStatus">Menyiapkan unduhan APK...</span>
+          <span id="wkApkDlPct" class="text-[#1d4ed8]">0%</span>
+        </div>
+        <div class="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
+          <div id="wkApkDlBar" class="h-full rounded-full bg-[#1d4ed8] transition-all duration-150" style="width:0%"></div>
+        </div>
+      </div>
       <div class="grid grid-cols-1 gap-2">
-        <a href="${info.downloadUrl}" target="_blank" rel="noopener noreferrer" class="w-full h-11 rounded-xl bg-[#1d4ed8] text-white text-xs font-semibold flex items-center justify-center gap-2 hover:bg-blue-800"><span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} Unduh &amp; Pasang Update</span> (${info.version})</a>
+        <button id="wkStartApkUpdateBtn" type="button" class="w-full h-11 btn-accent text-xs font-semibold flex items-center justify-center gap-2">
+          <span class="inline-flex items-center justify-center gap-1.5">${IC.download("w-4 h-4")} Unduh &amp; Pasang Update</span> (${info.version})
+        </button>
       </div>
     </div>
   `);
+  const startBtn = document.getElementById("wkStartApkUpdateBtn");
+  if (startBtn) startBtn.onclick = () => startInAppApkUpdate(info);
   const mRoot = document.getElementById("modalRoot");
   if (mRoot) mRoot.onclick = (e) => { /* Wajib update: tidak bisa ditutup lewat backdrop */ };
 }
+
+window.wkCheckUpdateNow = () => checkAppUpdate(true);
 
 async function checkAppUpdate(manual = false) {
   try {
     const res = await fetch(GITHUB_API_LATEST_URL, { headers: { "Accept": "application/vnd.github+json" }, cache: "no-store" });
     if (!res.ok) {
-      if (manual) showToast("Belum bisa cek update. Pastikan repo GitHub sudah Public.");
-      return;
+      if (manual) showToast("Belum bisa cek update. Pastikan koneksi internet aktif.");
+      return null;
     }
     const rel = await res.json();
     const latestTag = rel.tag_name || "";
     if (!latestTag) {
       if (manual) showToast("Informasi rilis belum tersedia.");
-      return;
+      return null;
     }
-    if (compareVersions(latestTag, APP_VERSION) > 0) {
-      const apkAsset = (rel.assets || []).find(a => (a.name || "").toLowerCase().endsWith(".apk"));
+    const apkAsset = (rel.assets || []).find(a => (a.name || "").toLowerCase().endsWith(".apk"));
+    const assetStamp = (apkAsset && apkAsset.updated_at) || rel.published_at || rel.created_at || "";
+    const assetMs = assetStamp ? Date.parse(assetStamp) : 0;
+    const installedBuildMs = (window.AndroidBridge && typeof window.AndroidBridge.getBuildEpochMs === "function")
+      ? Number(window.AndroidBridge.getBuildEpochMs() || 0)
+      : APP_BUILD_EPOCH;
+    const cmp = compareVersions(latestTag, APP_VERSION);
+    const sameVerRebuilt = (cmp === 0 && assetMs > 0 && installedBuildMs > 0 && (assetMs - installedBuildMs) > 15 * 60 * 1000 && localStorage.getItem("wk_applied_asset_stamp") !== assetStamp);
+
+    if (cmp > 0 || sameVerRebuilt) {
       const info = {
         version: latestTag,
         name: rel.name || ("WargaKITA " + latestTag),
         notes: rel.body || "",
+        assetStamp,
         downloadUrl: apkAsset ? apkAsset.browser_download_url : (rel.html_url || GITHUB_RELEASE_URL)
       };
       state.updateInfo = info;
       if (typeof render === "function") render();
       sendPhoneNotif(
-        `Wajib Update WargaKITA ${latestTag}`,
-        `Versi baru ${latestTag} sudah tersedia (saat ini ${APP_VERSION}). Segera unduh & pasang pembaruan agar aplikasi tetap berjalan optimal.`
+        `Update WargaKITA ${latestTag} Tersedia`,
+        `Pembaruan terbaru ${latestTag} siap diunduh & dipasang langsung di dalam aplikasi WargaKITA.`
       );
       setNawakMood("update", "update", 8000); setTimeout(() => playNawakVoice("update"), 320); showUpdateAvailableModal(info);
+      return info;
     } else {
       state.updateInfo = null;
       if (manual) showToast(`Aplikasi sudah versi terbaru (${APP_VERSION}).`);
+      return { latestTag, downloadUrl: apkAsset ? apkAsset.browser_download_url : GITHUB_RELEASE_URL, assetStamp, upToDate: true };
     }
   } catch (_) {
     if (manual) showToast("Gagal terhubung ke server update.");
+    return null;
   }
 }
 
@@ -11838,6 +11964,23 @@ function bindScreenEvents() {
     };
   });
 
+  const dlApkBtn = document.getElementById("directDownloadApkBtn");
+  if (dlApkBtn) dlApkBtn.onclick = async () => {
+    if (state.updateInfo && state.updateInfo.downloadUrl) {
+      showUpdateAvailableModal(state.updateInfo);
+      startInAppApkUpdate(state.updateInfo);
+      return;
+    }
+    showToast("Mengambil berkas APK terbaru...");
+    const res = await checkAppUpdate(false);
+    if (res && res.downloadUrl) {
+      const infoObj = state.updateInfo || { version: res.latestTag || APP_VERSION, notes: "", assetStamp: res.assetStamp || "", downloadUrl: res.downloadUrl };
+      showUpdateAvailableModal(infoObj);
+      startInAppApkUpdate(infoObj);
+    } else {
+      showToast("Belum bisa mengambil tautan rilis APK.");
+    }
+  };
   const chkUpdBtn = document.getElementById("checkUpdateManualBtn");
   if (chkUpdBtn) chkUpdBtn.onclick = () => checkAppUpdate(true);
   const openUpdBtn = document.getElementById("openUpdateModalBtn");
